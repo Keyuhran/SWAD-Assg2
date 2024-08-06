@@ -1,11 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 // Kieran 
 namespace SWAD_Team4_assignment_2
 {
     public class ICarStation
     {
-        public string Id {get; set;}
-        public string Address {get; set;}
-
+       
         private string id;
         private string address;
 
@@ -14,17 +18,17 @@ namespace SWAD_Team4_assignment_2
         {
             this.id = id;
             this.address = address;
-          
+
         }
         public string Id
         {
-            get {return id; }
-            set {id = value; }
+            get { return id; }
+            set { id = value; }
         }
         public string Address
         {
-            get {return address; }
-            set {address = value; }
+            get { return address; }
+            set { address = value; }
         }
 
 

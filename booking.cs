@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 // Kieran 
 namespace SWAD_Team4_assignment_2
 {
@@ -8,9 +14,9 @@ namespace SWAD_Team4_assignment_2
         private DateTime endDateTime;
         private string status;
         private bool confirmedStatus;
-        
 
-        public Booking(string id, datetime startDate, datetime endDate, string status, bool confirmedStatus)
+
+        public Booking(string id, DateTime startDate, DateTime endDate, string status, bool confirmedStatus)
         {
             this.id = id;
             this.startDateTime = startDate;
@@ -21,8 +27,8 @@ namespace SWAD_Team4_assignment_2
 
         public string Id
         {
-            get {return id; }
-            set {id = value; }
+            get { return id; }
+            set { id = value; }
         }
 
         public DateTime StartDateTime
@@ -33,12 +39,12 @@ namespace SWAD_Team4_assignment_2
         public DateTime EndDateTime
         {
             get { return endDateTime; }
-            set { endDateTime = value;}
+            set { endDateTime = value; }
         }
         public string Status
         {
-            get { return status}
-            set {status = value;}
+            get { return status; }
+            set { status = value; }
         }
         public bool ConfirmedStatus
         {
