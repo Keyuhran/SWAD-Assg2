@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 // Kieran 
 namespace SWAD_Team4_assignment_2
 {
@@ -15,27 +21,28 @@ namespace SWAD_Team4_assignment_2
             this.price = price;
             this.address = address;
             this.availability = availability;
-        
+
         }
 
         public string Id
         {
-            get {return id; }
-            set {id = value; }
+            get { return id; }
+            set { id = value; }
         }
-        public string Price;
+        public int Price;
         {
-            get {return price; }
-            set {price = value; }
+            get { return price; }
+            set { price = value; }
         }
         public string Address
         {
-            get {return address; }
-            set {address = value; }
+            get { return address; }
+            set { address = value; }
         }
-        public string Availability
+        public bool Availability
         {
-            get {return availability; }
-            set {availability = value; }
-        }    }
+            get { return availability; }
+            set { availability = value; }
+        }
+    }
 }

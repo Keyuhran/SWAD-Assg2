@@ -1,9 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 // Kieran 
 namespace SWAD_Team4_assignment_2
 {
     public class Car
     {
-   
+
         private string id;
         private string model;
         private string brand;
@@ -13,8 +19,8 @@ namespace SWAD_Team4_assignment_2
         private bool insuranceStatus;
         private string licensePlate;
         private int rentalRate;
-        
-        
+
+
 
         public Car(string id, string model, string brand, int year, int mileage, string color, bool insuranceStatus, string licensePlate, int rentalRate)
         {
@@ -31,50 +37,50 @@ namespace SWAD_Team4_assignment_2
 
         public string Id
         {
-            get {return id; }
-            set {id = value; }
+            get { return id; }
+            set { id = value; }
         }
         public string Model
         {
-            get {return model; }
-            set {model = value; }
+            get { return model; }
+            set { model = value; }
         }
         public string Brand
         {
-            get {return brand; }
-            set {brand = value; }
+            get { return brand; }
+            set { brand = value; }
         }
-        public string Year
+        public int Year
         {
-            get {return year; }
-            set {year = value; }
+            get { return year; }
+            set { year = value; }
         }
-        public string Mileage
+        public int Mileage
         {
-            get {return mileage; }
-            set {mileage = value; }
+            get { return mileage; }
+            set { mileage = value; }
         }
         public string Color
         {
-            get {return color; }
-            set {color = value; }
+            get { return color; }
+            set { color = value; }
         }
-        public string InsuranceStatus
+        public bool InsuranceStatus
         {
-            get {return insuranceStatus; }
-            set {insuranceStatus = value; }
+            get { return insuranceStatus; }
+            set { insuranceStatus = value; }
         }
         public string LicensePlate
         {
-            get {return licensePlate; }
-            set {licensePlate = value; }
+            get { return licensePlate; }
+            set { licensePlate = value; }
         }
-        public string RentalRate
+        public int RentalRate
         {
-            get {return rentalRate; }
-            set {rentalRate = value; }
+            get { return rentalRate; }
+            set { rentalRate = value; }
         }
-        
+
 
     }
 }
