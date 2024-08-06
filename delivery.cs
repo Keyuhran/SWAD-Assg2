@@ -3,19 +3,32 @@ namespace SWAD_Team4_assignment_2
 {
     public class Delivery
     {
-        public string Id {get; set;}
-        public datetime Date {get; set;}
-        public string address {get; set;}
+        private string id;
+        private DateTime date;
+        private string address;
 
-        
-        public Delivery() {}
 
         public Delivery(string id, datetime date, string address)
         {
-            Id = id;
-            Date = date;
-            Address = address;
+            this.id = id;
+            this.date = date;
+            this.address = address;
         
+        }
+        public string Id
+        {
+            get {return id; }
+            set {id = value; }
+        }
+        public string Date
+        {
+            get {return date; }
+            set {date = value; }
+        }
+        public string Address
+        {
+            get {return address; }
+            set {address = value; }
         }
 
     }

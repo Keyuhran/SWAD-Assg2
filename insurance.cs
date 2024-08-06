@@ -3,25 +3,47 @@ namespace SWAD_Team4_assignment_2
 {
     public class Insurance
     {
-        public string Id {get; set;}
-        public datetime ExpiryDate {get; set;}
-        public int CoverageLimit {get; set;}
-        public string Name {get; set;}
-        public string PolicyStatus {get; set;}
-      
-        
+        private string id;
+        private DateTime expiryDate;
+        private int coverageLimit;
+        private string name;
+        private string policyStatus;
 
 
-        public Insurance() {}
 
         public Insurance(string id, datetime expiryDate, int coverageLimit, string name, string policyStatus)
         {
-            Id = id;
-            ExpiryDate = expiryDate;
-            CoverageLimit = coverageLimit;
-            Name = name;
-            PolicyStatus = policyStatus;
+            this.id = id;
+            this.expiryDate = expiryDate;
+            this.coverageLimit = coverageLimit;
+            this.name = name;
+            this.policyStatus = policyStatus;
         
+        }
+        public string Id
+        {
+            get {return id; }
+            set {id = value; }
+        }
+        public string ExpiryDate;
+        {
+            get {return expiryDate; }
+            set {expiryDate = value; }
+        }
+        public string CoverageLimit
+        {
+            get {return coverageLimit; }
+            set {coverageLimit = value; }
+        }
+        public string Name
+        {
+            get {return name; }
+            set {name = value; }
+        }
+        public string PolicyStatus
+        {
+            get {return policyStatus; }
+            set {policyStatus = value; }
         }
 
     }
