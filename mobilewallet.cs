@@ -1,24 +1,32 @@
-class MobileWallet
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SWAD_Assg2
 {
-    private string name;
-
-    private string transcationId;
-
-    public MobileWallet (string name, string transcationId)
+    public class MobileWallet:PaymentMethod
     {
-        this.name = name;
-        this.transcationId = transcationId;
-    }
+        private string name;
+        private string transactionId;
 
-    public string name
-    {
-        get { return name; }
-        set { name = value; }
-    }
+        public MobileWallet(string id, string type, string name, string transactionId) : base(id,type)
+        {
+            this.name = name;
+            this.transactionId = transactionId;
+        }
 
-    public string transcationId
-    {
-        get { return transcationId; }
-        set { transcationId = value; }
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public string TranscationId
+        {
+            get { return transactionId; }
+            set { transactionId = value; }
+        }
     }
 }

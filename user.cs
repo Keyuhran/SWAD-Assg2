@@ -1,30 +1,59 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//Daryl
+//Kieran
 
 namespace SWAD_Team4_assignment_2
 {
-    class User
+    public class User
     {
-        private string name;
+        private string username;
+        private string password;
+        private string id;
+        private int phoneNumber;
         private string email;
-        private string phoneNumber;
-        private string dob;
-        private string licenseId;
 
 
-        public User(string name, string email, string phoneNumber, string dob, string licenseId)
+        public User(string username, string password, string id, int phoneNumber,string email)
         {
-            this.name = name;
-            this.email = email;
+            this.username = username;
+            this.password = password;
+            this.id = id;
             this.phoneNumber = phoneNumber;
-            this.dob = dob;
-            this.licenseId = licenseId;
+            this.email = email;
         }
 
+        public string Username
+        {
+            get { return username; }
+            set { username = value; }
+        }
+        public string Password  
+        {
+            get { return password; }
+            set { password = value; }
+        }
+        public string Id
+        {
+            get { return id; }
+            set { id = value; }
+        }
+        public int PhoneNumber
+        {
+            get { return phoneNumber; }
+            set { phoneNumber = value; }
+        }
+
+        public string Email
+        {
+            get { return email; }
+            set { email = value; }
+        }
+       
     }
- }
+
+}
