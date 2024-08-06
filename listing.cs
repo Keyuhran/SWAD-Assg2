@@ -29,7 +29,7 @@ namespace SWAD_Team4_assignment_2
             get { return id; }
             set { id = value; }
         }
-        public int Price;
+        public int Price
         {
             get { return price; }
             set { price = value; }

@@ -31,12 +31,12 @@ namespace SWAD_Team4_assignment_2
             get { return id; }
             set { id = value; }
         }
-        public string ExpiryDate;
+        public DateTime ExpiryDate
         {
             get { return expiryDate; }
             set { expiryDate = value; }
         }
-        public string CoverageLimit
+        public int CoverageLimit
         {
             get { return coverageLimit; }
             set { coverageLimit = value; }
