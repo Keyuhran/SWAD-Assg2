@@ -620,11 +620,12 @@ namespace SWAD_Team4_assignment_2
         
 
 
-        private static int getUniqueID = 1;
+                private static int getUniqueID = 1;
         static int UniqueID()
         {
             return getUniqueID++;
         }
+
         static void CreateNewRenterAccount()
         {
             Console.WriteLine("\nEnter Username:");
@@ -638,13 +639,30 @@ namespace SWAD_Team4_assignment_2
             {
                 Console.WriteLine("\nEnter Email:");
                 email = Console.ReadLine();
-                if (email.Contains("@") && email.Contains("."))
+                if (!email.Contains("@") || !email.Contains("."))
                 {
-                    break;
+                    Console.WriteLine("Invalid email format. Please enter a valid email.");
+                    continue;
+                }
+
+                // Check if email already exists
+                bool emailExists = false;
+                foreach (var renter in carRenters)
+                {
+                    if (renter.Email == email)
+                    {
+                        emailExists = true;
+                        break;
+                    }
+                }
+
+                if (emailExists)
+                {
+                    Console.WriteLine("This email is already registered. Please use a different email.");
                 }
                 else
                 {
-                    Console.WriteLine("Invalid email format. Please enter a valid email.");
+                    break;
                 }
             }
 
@@ -653,7 +671,7 @@ namespace SWAD_Team4_assignment_2
             int phoneNumber;
             while (true)
             {
-                Console.Write("Enter Phone Number: ");
+                Console.Write("\nEnter Phone Number: ");
                 string phoneNumberInput = Console.ReadLine();
 
                 if (phoneNumberInput.Length == 8 && (phoneNumberInput.StartsWith("8") || phoneNumberInput.StartsWith("9")) && int.TryParse(phoneNumberInput, out phoneNumber))
@@ -665,10 +683,11 @@ namespace SWAD_Team4_assignment_2
                     Console.WriteLine("Invalid phone number. It must start with 8 or 9 and be 8 digits long.");
                 }
             }
+
             DateTime dob;
             while (true)
             {
-                Console.Write("Enter Date of Birth (YYYY-MM-DD): ");
+                Console.Write("\nEnter Date of Birth (YYYY-MM-DD): ");
                 string dobInput = Console.ReadLine();
 
                 if (DateTime.TryParseExact(dobInput, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dob))
@@ -689,13 +708,14 @@ namespace SWAD_Team4_assignment_2
                     Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
                 }
             }
+
             int monthlyFee = 0;
             bool isPrime = false;
             bool isVerified = false;
             string licenseId;
             while (true)
             {
-                Console.Write("Enter License ID (Format: One letter, seven digits, one letter): ");
+                Console.Write("\nEnter License ID (Format: One letter, seven digits, one letter): ");
                 licenseId = Console.ReadLine();
                 if (licenseId.Length == 9 &&
                     char.IsLetter(licenseId[0]) &&
@@ -710,7 +730,7 @@ namespace SWAD_Team4_assignment_2
                 }
             }
 
-            CarRenter newCarRenter = new CarRenter(username,password, id, phoneNumber, email, monthlyFee, dob, isPrime, licenseId, isVerified);
+            CarRenter newCarRenter = new CarRenter(username, password, id, phoneNumber, email, monthlyFee, dob, isPrime, licenseId, isVerified);
             carRenters.Add(newCarRenter);
             Console.WriteLine("\nNew Renter Account Created:");
             Console.WriteLine($"Name: {username}");
@@ -720,6 +740,7 @@ namespace SWAD_Team4_assignment_2
             Console.WriteLine($"Date of Birth: {dob:yyyy-MM-dd}");
             Console.WriteLine($"License ID: {licenseId}");
         }
+
 
 
         static void CreateNewOwnerAccount()
@@ -734,13 +755,30 @@ namespace SWAD_Team4_assignment_2
             {
                 Console.WriteLine("\nEnter Email:");
                 email = Console.ReadLine();
-                if (email.Contains("@") && email.Contains("."))
+                if (!email.Contains("@") || !email.Contains("."))
                 {
-                    break;
+                    Console.WriteLine("Invalid email format. Please enter a valid email.");
+                    continue;
+                }
+
+                // Check if email already exists
+                bool emailExists = false;
+                foreach (var owner in carOwners)
+                {
+                    if (owner.Email == email)
+                    {
+                        emailExists = true;
+                        break;
+                    }
+                }
+
+                if (emailExists)
+                {
+                    Console.WriteLine("This email is already registered. Please use a different email.");
                 }
                 else
                 {
-                    Console.WriteLine("Invalid email format. Please enter a valid email.");
+                    break;
                 }
             }
 
@@ -749,7 +787,7 @@ namespace SWAD_Team4_assignment_2
             int phoneNumber;
             while (true)
             {
-                Console.WriteLine("Enter Phone Number: ");
+                Console.WriteLine("\nEnter Phone Number: ");
                 string phoneNumberInput = Console.ReadLine();
 
                 if (phoneNumberInput.Length == 8 && (phoneNumberInput.StartsWith("8") || phoneNumberInput.StartsWith("9")) && int.TryParse(phoneNumberInput, out phoneNumber))
@@ -765,7 +803,7 @@ namespace SWAD_Team4_assignment_2
             DateTime dob;
             while (true)
             {
-                Console.WriteLine("Enter Date of Birth (YYYY-MM-DD): ");
+                Console.WriteLine("\nEnter Date of Birth (YYYY-MM-DD): ");
                 string dobInput = Console.ReadLine();
 
                 if (DateTime.TryParseExact(dobInput, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dob))
@@ -786,9 +824,10 @@ namespace SWAD_Team4_assignment_2
                     Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
                 }
             }
+
             int earnings = 0;
 
-            CarOwner newCarOwner = new CarOwner(username, password, id,phoneNumber, dob, email, earnings);
+            CarOwner newCarOwner = new CarOwner(username, password, id, phoneNumber, email, dob, earnings);
             carOwners.Add(newCarOwner);
 
             Console.WriteLine("\nNew Car Owner Account Created:");
