@@ -65,7 +65,7 @@ namespace SWAD_Team4_assignment_2
             }
         }
 
-        static void AddNewVehicle()
+               static void AddNewVehicle()
         {
             Console.WriteLine("Car Owner selects the add new vehicle option");
 
@@ -113,7 +113,7 @@ namespace SWAD_Team4_assignment_2
             {
                 Console.WriteLine("Welcome to the Insurance terminal!");
 
-                Console.Write("Enter Insurance ID:");
+                Console.Write("Enter Insurance ID e.g.(S1234567A:");
                 insuranceId = Console.ReadLine();
                 if (string.IsNullOrEmpty(insuranceId))
                 {
@@ -121,7 +121,7 @@ namespace SWAD_Team4_assignment_2
                     continue;
                 }
 
-                Console.Write("Enter Insurance Name:");
+                Console.Write("Enter Insurance Name):");
                 insuranceName = Console.ReadLine();
                 if (string.IsNullOrEmpty(insuranceName)) { Console.WriteLine("Insurance Name is required!"); continue; }
 
@@ -136,6 +136,12 @@ namespace SWAD_Team4_assignment_2
                 if (!DateTime.TryParseExact(Console.ReadLine(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out expiryDate))
                 {
                     Console.WriteLine("Invalid date format! Please enter a valid expiry date.");
+                    continue;
+                }
+
+                if (expiryDate < DateTime.Now)
+                {
+                    Console.WriteLine("Insurance expiry date cannot be in the past.");
                     continue;
                 }
 
@@ -269,6 +275,8 @@ namespace SWAD_Team4_assignment_2
                 }
             }
         }
+    
+
 
 
 
