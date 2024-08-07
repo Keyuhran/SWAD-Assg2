@@ -69,25 +69,24 @@ namespace SWAD_Team4_assignment_2
         }
     }
 
-    class CarOwner : User
-    {
-        private double earnings;
+     class CarOwner : User
+ {
+     private double earnings;
 
-        public double Earnings
-        {
-            get { return earnings; }
-            set { earnings = value; }
-        }
+     public CarOwner(string username, string password, string id, int phoneNumber, DateTime dob, string email, double earnings) : base(username, password, id, phoneNumber, email)
+     {
+         this.earnings = earnings;
+         this.Cars = new List<Car>();
 
-        public List<Car> Cars { get; set; }
-        public List<Booking> Bookings { get; set; }
+     }
+     public double Earnings
+     {
+         get { return earnings; }
+         set { earnings = value; }
+     }
 
-        public CarOwner(string username, string password, string id, int phoneNumber, string email, double earnings) : base(username, password, id, phoneNumber, email)
-        {
-            this.earnings = earnings;
-            this.Cars = new List<Car>();
-        }
-    }
+     public List<Car> Cars { get; set; }
+ }
 
     public class CarRenter : User
     {

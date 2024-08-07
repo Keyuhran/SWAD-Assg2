@@ -14,6 +14,7 @@ namespace SWAD_Team4_assignment_2
         static List<CarOwner> carOwners = new List<CarOwner>();
         static List<AvailabilitySchedule> availabilitySchedules = new List<AvailabilitySchedule>();
         static List<Booking> bookings = new List<Booking>();
+        static List<CarRenter> renters = new List<CarRenter>();
         static int nextCarId = 1; // Static counter for car IDs
 
         static void Main()
@@ -538,7 +539,10 @@ namespace SWAD_Team4_assignment_2
         static void CreateNewRenterAccount()
         {
             Console.WriteLine("\nEnter Username:");
-            string name = Console.ReadLine();
+            string username = Console.ReadLine();
+
+            Console.WriteLine("\nEnter Password:");
+            string password = Console.ReadLine();
 
             string email;
             while (true)
@@ -557,13 +561,13 @@ namespace SWAD_Team4_assignment_2
 
             string id = UniqueID().ToString();
 
-            string phoneNumber;
+            int phoneNumber;
             while (true)
             {
                 Console.Write("Enter Phone Number: ");
-                phoneNumber = Console.ReadLine();
+                string phoneNumberInput = Console.ReadLine();
 
-                if (phoneNumber.Length == 8 && (phoneNumber.StartsWith("8") || phoneNumber.StartsWith("9")))
+                if (phoneNumberInput.Length == 8 && (phoneNumberInput.StartsWith("8") || phoneNumberInput.StartsWith("9")) && int.TryParse(phoneNumberInput, out phoneNumber))
                 {
                     break;
                 }
@@ -572,7 +576,6 @@ namespace SWAD_Team4_assignment_2
                     Console.WriteLine("Invalid phone number. It must start with 8 or 9 and be 8 digits long.");
                 }
             }
-
             DateTime dob;
             while (true)
             {
@@ -597,7 +600,9 @@ namespace SWAD_Team4_assignment_2
                     Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
                 }
             }
-
+            int monthlyFee = 0;
+            bool isPrime = false;
+            bool isVerified = false;
             string licenseId;
             while (true)
             {
@@ -616,10 +621,10 @@ namespace SWAD_Team4_assignment_2
                 }
             }
 
-            CarRenter newCarRenter = new CarRenter(name, id, email, phoneNumber, dob, licenseId);
-            carRenter.Add(newCarRenter);
+            CarRenter newCarRenter = new CarRenter(username,password, id, phoneNumber, email, monthlyFee, dob, isPrime, licenseId, isVerified);
+            renters.Add(newCarRenter);
             Console.WriteLine("\nNew Renter Account Created:");
-            Console.WriteLine($"Name: {name}");
+            Console.WriteLine($"Name: {username}");
             Console.WriteLine($"ID: {id}");
             Console.WriteLine($"Email: {email}");
             Console.WriteLine($"Phone Number: {phoneNumber}");
@@ -631,7 +636,9 @@ namespace SWAD_Team4_assignment_2
         static void CreateNewOwnerAccount()
         {
             Console.WriteLine("\nEnter Username:");
-            string name = Console.ReadLine();
+            string username = Console.ReadLine();
+            Console.WriteLine("\nEnter Username:");
+            string password = Console.ReadLine();
 
             string email;
             while (true)
@@ -690,12 +697,13 @@ namespace SWAD_Team4_assignment_2
                     Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
                 }
             }
+            int earnings = 0;
 
-            CarOwner newCarOwner = new CarOwner(name, id, email, phoneNumber, dob, 0.0);
+            CarOwner newCarOwner = new CarOwner(username, password, id,phoneNumber, dob, email, earnings);
             carOwners.Add(newCarOwner);
 
             Console.WriteLine("\nNew Car Owner Account Created:");
-            Console.WriteLine($"Name: {name}");
+            Console.WriteLine($"Name: {username}");
             Console.WriteLine($"ID: {id}");
             Console.WriteLine($"Email: {email}");
             Console.WriteLine($"Phone Number: {phoneNumber}");
