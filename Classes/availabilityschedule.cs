@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SWAD_Assg2
+namespace SWAD_Team4_assignment_2
 {
     public class AvailabilitySchedule
     {
