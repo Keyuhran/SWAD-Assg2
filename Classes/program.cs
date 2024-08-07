@@ -18,12 +18,12 @@ namespace SWAD_Team4_assignment_2
             {
                 Console.WriteLine("Welcome to iCar Car Rental System");
                 Console.WriteLine("1. Add New Vehicle");
-                Console.WriteLine("2. ");
+                Console.WriteLine("2. Make Booking");
                 Console.WriteLine("3. ");
                 Console.WriteLine("4. ");
                 Console.WriteLine("5. ");
                 Console.WriteLine("6. ");
-                Console.WriteLine("7. ");
+                Console.WriteLine("7. Exit");
                 Console.Write("\nPlease select an option: ");
 
                 string choice = Console.ReadLine();
@@ -34,7 +34,7 @@ namespace SWAD_Team4_assignment_2
                         AddNewVehicle();
                         break;
                     case "2":
-                        // Add functionality for option 2
+                        MakeBooking();
                         break;
                     case "3":
                         // Add functionality for option 3
