@@ -5,7 +5,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SWADAssg2
+namespace SWAD_Team4_assignment_2
 {
     public class User
     {
@@ -271,7 +271,10 @@ namespace SWADAssg2
             this.type = type;
         }
 
-
+        public virtual bool MakePayment(double totalAmount, string bookingId)
+        {
+            return true;
+        }
     }
 
     public class MobileWallet : PaymentMethod
@@ -295,6 +298,14 @@ namespace SWADAssg2
         {
             this.name = name;
             this.transactionId = transactionId;
+        }
+
+        public override bool MakePayment(double totalAmount, string bookingId)
+        {
+            Console.Write("Enter a credit card number in the format XXXX-XXXX-XXXX-XXXX:");
+            string mwInfo = Console.ReadLine(); 
+            
+            return true;
         }
     }
 
@@ -510,6 +521,31 @@ namespace SWADAssg2
             this.endDateTime = endDate;
             this.status = status;
             this.confirmedStatus = confirmedStatus;
+        }
+    }
+
+    public class AvailabilitySchedule
+    {
+        private DateTime startDate;
+        private DateTime endDate;
+
+        public DateTime StartDate
+        {
+            get { return startDate; }
+            set { startDate = value; }
+        }
+        public DateTime EndDate
+        {
+            get { return endDate; }
+            set { endDate = value; }
+        }
+        public List<DateTime> UnavailableDates { get; set; }
+
+        public AvailabilitySchedule(DateTime startDate, DateTime endDate, List<DateTime> unavailableDates)
+        {
+            StartDate = startDate;
+            EndDate = endDate;
+            UnavailableDates = unavailableDates;
         }
     }
 }
