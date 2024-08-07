@@ -41,25 +41,31 @@ namespace SWAD_Team4_assignment_2
 
                 switch (choice)
                 {
-                    case "1":
+                case "1":
+                    LogIn();
+                    break;
+                    
+                case "2":
+                    Console.Write("Do you wish to Log In? (Y/N): ");
+                    string logchoice = Console.ReadLine();
+                    if (logchoice.ToLower() == "y")
+                    {
                         LogIn();
                         break;
-                    case "2":
-                        CreateAccount();
-                        Console.Write("Do you wish to Log In? (Y/N): ");
-                        string logchoice = Console.ReadLine();
-                        if (logchoice.ToLower() == "y")
-                        {
-                            LogIn();
-                            break;
-                        }
+                    }
+                    
+                if (logchoice.ToLower() == "n")
+                    {
+                        SignUp();
                         break;
+                    }
                     case "3":
-                        return;
+                    return;
+                    
                     default:
-                        Console.WriteLine("\nInvalid option. Please try again.\n");
-                        break;
-                }
+                    Console.WriteLine("\nInvalid option. Please try again.\n");
+                    break;
+                    }
             }
         }
 
@@ -164,6 +170,33 @@ namespace SWAD_Team4_assignment_2
                     break;
             }
         }
+
+        static void SignUp()
+        {
+    Console.WriteLine("\nCarRenter or CarOwner");
+    Console.WriteLine("1. CarRenter");
+    Console.WriteLine("2. CarOwner");
+    Console.WriteLine("3. Back");
+    Console.Write("\nPlease select an option: ");
+
+    string choice = Console.ReadLine();
+
+    switch (choice)
+    {
+        case "1":
+            CreateNewRenterAccount(); 
+            break;
+
+        case "2":
+            CreateNewOwnerAccount();
+            break;
+
+        case "3":
+            Console.WriteLine("\n");
+            Main();
+            break;
+
+    }
 
         static void CreateAccount()
         {
