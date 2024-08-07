@@ -9,6 +9,7 @@ namespace SWAD_Team4_assignment_2
     {
         static List<Car> cars = new List<Car>();
         static List<AvailabilitySchedule> availabilitySchedules = new List<AvailabilitySchedule>();
+        static List<Booking> bookings = new List<Booking>();
         static int nextCarId = 1; // Static counter for car IDs
 
         static void Main()
