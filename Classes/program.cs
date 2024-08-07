@@ -48,7 +48,7 @@ namespace SWAD_Team4_assignment_2
                         MakeBooking();
                         break;
                     case "4":
-                        MakeBooking();
+                        CreateNewRenterAccount();
                         break;
                     case "5":
                         MakeBooking();
@@ -376,6 +376,103 @@ namespace SWAD_Team4_assignment_2
                 Console.WriteLine("Invalid vehicle ID.");
             }
         }
+
+                private static int getUniqueID = 1;
+        static int UniqueID()
+        {
+            return getUniqueID++;
+        }
+        static void CreateNewRenterAccount()
+        {
+            Console.WriteLine("\nEnter Username:");
+            string name = Console.ReadLine();
+
+            string email;
+            while (true)
+            {
+                Console.WriteLine("\nEnter Email:");
+                email = Console.ReadLine();
+                if (email.Contains("@") && email.Contains("."))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid email format. Please enter a valid email.");
+                }
+            }
+
+            string id = UniqueID().ToString();
+
+            string phoneNumber;
+            while (true)
+            {
+                Console.Write("Enter Phone Number: ");
+                phoneNumber = Console.ReadLine();
+
+                if (phoneNumber.Length == 8 && (phoneNumber.StartsWith("8") || phoneNumber.StartsWith("9")))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid phone number. It must start with 8 or 9 and be 8 digits long.");
+                }
+            }
+
+            DateTime dob;
+            while (true)
+            {
+                Console.Write("Enter Date of Birth (YYYY-MM-DD): ");
+                string dobInput = Console.ReadLine();
+
+                if (DateTime.TryParseExact(dobInput, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dob))
+                {
+                    int age = DateTime.Now.Year - dob.Year;
+                    if (dob > DateTime.Now.AddYears(-age)) age--;
+                    if (age >= 18)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("You cannot register as you are underage.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+                }
+            }
+
+            string licenseId;
+            while (true)
+            {
+                Console.Write("Enter License ID (Format: One letter, seven digits, one letter): ");
+                licenseId = Console.ReadLine();
+                if (licenseId.Length == 9 &&
+                    char.IsLetter(licenseId[0]) &&
+                    char.IsLetter(licenseId[8]) &&
+                    int.TryParse(licenseId.Substring(1, 7), out _))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid License ID format. It must be one letter, followed by seven digits, followed by one letter.");
+                }
+            }
+
+            Console.WriteLine("\nNew Renter Account Created:");
+            Console.WriteLine($"ID: {id}");
+            Console.WriteLine($"Name: {name}");
+            Console.WriteLine($"Email: {email}");
+            Console.WriteLine($"Phone Number: {phoneNumber}");
+            Console.WriteLine($"Date of Birth: {dob:yyyy-MM-dd}");
+            Console.WriteLine($"License ID: {licenseId}");
+        }
+    }
+}
 
     }
 
