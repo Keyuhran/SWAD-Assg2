@@ -15,16 +15,18 @@ namespace SWAD_Team4_assignment_2
         static List<AvailabilitySchedule> availabilitySchedules = new List<AvailabilitySchedule>();
         static List<Booking> bookings = new List<Booking>();
         static List<CarRenter> renters = new List<CarRenter>();
+        static List<ICarStation> locations = new List<ICarStation>();
         static int nextCarId = 1; // Static counter for car IDs
 
         static void Main()
         {
-
             cars.Add(new Car("1", "Model S", "Tesla", 2022, 15000, "Red", true, "ABC123", 100));
             cars.Add(new Car("2", "Mustang", "Ford", 2021, 20000, "Blue", true, "XYZ789", 80));
             DateTime bday = new DateTime(2024, 8, 16);
             carRenters.Add(new CarRenter("Pofrz", "password", "001", 84048488, "user2@example.com", 0, bday, false, "licenseid", true));
             carRenters.Add(new CarRenter("KK47", "password", "002", 84048488, "user2@example.com", 0, bday, false, "licenseid", true));
+            locations.Add(new ICarStation("01", "21 choo street"));
+            locations.Add(new ICarStation("02", "47 primo street"));
             // Log In / Create User
             while (true)
             {
@@ -38,31 +40,25 @@ namespace SWAD_Team4_assignment_2
 
                 switch (choice)
                 {
-                case "1":
-                    LogIn();
-                    break;
-                    
-                case "2":
-                    Console.Write("Do you wish to Log In? (Y/N): ");
-                    string logchoice = Console.ReadLine();
-                    if (logchoice.ToLower() == "y")
-                    {
+                    case "1":
                         LogIn();
                         break;
-                    }
-                    
-                if (logchoice.ToLower() == "n")
-                    {
-                        SignUp();
+                    case "2":
+                        CreateAccount();
+                        Console.Write("Do you wish to Log In? (Y/N): ");
+                        string logchoice = Console.ReadLine();
+                        if (logchoice.ToLower() == "y")
+                        {
+                            LogIn();
+                            break;
+                        }
                         break;
-                    }
                     case "3":
-                    return;
-                    
+                        return;
                     default:
-                    Console.WriteLine("\nInvalid option. Please try again.\n");
-                    break;
-                    }
+                        Console.WriteLine("\nInvalid option. Please try again.\n");
+                        break;
+                }
             }
         }
 
@@ -170,33 +166,6 @@ namespace SWAD_Team4_assignment_2
                     break;
             }
         }
-
-        static void SignUp()
-        {
-    Console.WriteLine("\nCarRenter or CarOwner");
-    Console.WriteLine("1. CarRenter");
-    Console.WriteLine("2. CarOwner");
-    Console.WriteLine("3. Back");
-    Console.Write("\nPlease select an option: ");
-
-    string choice = Console.ReadLine();
-
-    switch (choice)
-    {
-        case "1":
-            CreateNewRenterAccount(); 
-            break;
-
-        case "2":
-            CreateNewOwnerAccount();
-            break;
-
-        case "3":
-            Console.WriteLine("\n");
-            Main();
-            break;
-
-    }
 
         static void CreateAccount()
         {
@@ -494,149 +463,163 @@ namespace SWAD_Team4_assignment_2
 
             if (selectedCar != null)
             {
-                DateTime startDate;
-                DateTime endDate;
-                while (true)
+                Console.WriteLine("Available pickup locations:");
+                foreach (var loc in locations)
                 {
-                    Console.Write("Enter start date (yyyy-mm-dd): ");
-                    if (!DateTime.TryParse(Console.ReadLine(), out startDate))
-                    {
-                        Console.WriteLine("Invalid date format! Please enter a valid date.");
-                        continue;
-                    }
-
-                    if (startDate < DateTime.Today)
-                    {
-                        Console.WriteLine("Start date cannot be before today's date. Please enter a valid start date.");
-                        continue;
-                    }
-
-                    Console.Write("Enter end date (yyyy-mm-dd): ");
-                    if (!DateTime.TryParse(Console.ReadLine(), out endDate))
-                    {
-                        Console.WriteLine("Invalid date format! Please enter a valid date.");
-                        continue;
-                    }
-
-                    if (endDate < DateTime.Today)
-                    {
-                        Console.WriteLine("End date cannot be before today's date. Please enter a valid end date.");
-                        continue;
-                    }
-
-                    if (endDate >= startDate)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("End date cannot be before start date. Please re-enter the dates.");
-                    }
+                    Console.WriteLine($"ID: {loc.Id}, Address: {loc.Address}");
                 }
 
-                // Calculate the total cost
-                TimeSpan rentalPeriod = endDate - startDate;
-                int rentalDays = rentalPeriod.Days + 1; // Include the start date as a rental day
-                decimal totalCost = rentalDays * selectedCar.RentalRate;
-                Console.WriteLine($"Total cost for the booking: ${totalCost}");
-
-                // Check for overlapping bookings
-                bool isAvailable = true;
-                foreach (var booking in bookings)
+                Console.Write("Enter pickup location ID: ");
+                string location = Console.ReadLine();
+                ICarStation selectedLocation = locations.Find(loc => loc.Id == location);
+                if (selectedLocation != null)
                 {
-                    if (booking.Status == "Confirmed" && booking.StartDateTime < endDate && startDate < booking.EndDateTime)
-                    {
-                        isAvailable = false;
-                        break;
-                    }
-                }
-                if (isAvailable)
-                {
-                    Booking newBooking = new Booking(Guid.NewGuid().ToString(), startDate, endDate, "Pending", false);
-                    bookings.Add(newBooking);
-                    Console.WriteLine("Booking created successfully.");
 
-                    // Confirm booking and make payment
-                    Console.Write("Do you want to confirm the booking and proceed to payment? (yes/no): ");
-                    string confirm = Console.ReadLine();
-                    if (confirm.ToLower() == "yes")
+                    DateTime startDate;
+                    DateTime endDate;
+                    while (true)
                     {
-                        bool flag = true;
-                        bool flag2 = true;
-                        Console.WriteLine("Payment Methods:");
-                        Console.WriteLine("a) Card");
-                        Console.WriteLine("b) Mobile Wallet");
-                        Console.WriteLine("c) Exit");
-                        Console.Write("Select payment method: ");
-                        string paymentType = Console.ReadLine();
-                        while (flag)
+                        Console.Write("Enter start date (yyyy-mm-dd): ");
+                        if (!DateTime.TryParse(Console.ReadLine(), out startDate))
                         {
-                            switch (paymentType)
-                            {
-                                case "a":
-                                    // Handle Card payment method
-                                    Console.WriteLine("Card payment selected.");
-                                    Console.Write("Name registered under Mobile Wallet: ");
-                                    string name = Console.ReadLine();
-                                    Console.Write("Balance in Mobile Wallet (2dp): ");
-                                    decimal balance = decimal.Parse(Console.ReadLine());
-                                    Console.Write("PhoneNo registered under Mobile Wallet: ");
-                                    string phoneNo = Console.ReadLine();
-                                    MobileWallet mobileWallet = new MobileWallet("Mobile Wallet", balance, name, phoneNo);
-                                    mobileWallet.MakePayment(totalCost);
-                                    break;
-                                case "b":
-                                    // Handle Mobile Wallet payment method
-                                    Console.WriteLine("Mobile Wallet payment selected.");
-                                    break;
-                                case "c":
-                                    flag = false;
-                                    break;
-                                default:
-                                    Console.WriteLine("Invalid selection.");
-                                    break;
-                            }
+                            Console.WriteLine("Invalid date format! Please enter a valid date.");
+                            continue;
                         }
-                        Console.WriteLine("Processing payment...");
-                        newBooking.Status = "Confirmed";
-                        newBooking.ConfirmedStatus = true;
-                        Console.WriteLine("Booking confirmed and payment successful.");
+
+                        if (startDate < DateTime.Today)
+                        {
+                            Console.WriteLine("Start date cannot be before today's date. Please enter a valid start date.");
+                            continue;
+                        }
+
+                        Console.Write("Enter end date (yyyy-mm-dd): ");
+                        if (!DateTime.TryParse(Console.ReadLine(), out endDate))
+                        {
+                            Console.WriteLine("Invalid date format! Please enter a valid date.");
+                            continue;
+                        }
+
+                        if (endDate < DateTime.Today)
+                        {
+                            Console.WriteLine("End date cannot be before today's date. Please enter a valid end date.");
+                            continue;
+                        }
+
+                        if (endDate >= startDate)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("End date cannot be before start date. Please re-enter the dates.");
+                        }
+                    }
+
+                    // Calculate the total cost
+                    TimeSpan rentalPeriod = endDate - startDate;
+                    int rentalDays = rentalPeriod.Days + 1; // Include the start date as a rental day
+                    decimal totalCost = rentalDays * selectedCar.RentalRate;
+                    Console.WriteLine($"Total cost for the booking: ${totalCost}");
+
+                    // Check for overlapping bookings
+                    bool isAvailable = true;
+                    foreach (var booking in bookings)
+                    {
+                        if (booking.Status == "Confirmed" && booking.StartDateTime < endDate && startDate < booking.EndDateTime)
+                        {
+                            isAvailable = false;
+                            break;
+                        }
+                    }
+                    if (isAvailable)
+                    {
+                        Booking newBooking = new Booking(Guid.NewGuid().ToString(), startDate, endDate, "Pending", false, location);
+                        bookings.Add(newBooking);
+                        Console.WriteLine("Booking created successfully.");
+
+                        // Confirm booking and make payment
+                        Console.Write("Do you want to confirm the booking and proceed to payment? (yes/no): ");
+                        string confirm = Console.ReadLine();
+                        if (confirm.ToLower() == "yes")
+                        {
+                            bool flag = true;
+                            bool flag2 = true;
+                            Console.WriteLine("Payment Methods:");
+                            Console.WriteLine("a) Card");
+                            Console.WriteLine("b) Mobile Wallet");
+                            Console.WriteLine("c) Exit");
+                            Console.Write("Select payment method: ");
+                            string paymentType = Console.ReadLine();
+                            while (flag)
+                            {
+                                switch (paymentType)
+                                {
+                                    case "a":
+                                        // Handle Card payment method
+                                        Console.WriteLine("Card payment selected.");
+                                        Console.Write("Name registered under Mobile Wallet: ");
+                                        string name = Console.ReadLine();
+                                        Console.Write("Balance in Mobile Wallet (2dp): ");
+                                        decimal balance = decimal.Parse(Console.ReadLine());
+                                        Console.Write("PhoneNo registered under Mobile Wallet: ");
+                                        string phoneNo = Console.ReadLine();
+                                        MobileWallet mobileWallet = new MobileWallet("Mobile Wallet", balance, name, phoneNo);
+                                        mobileWallet.MakePayment(totalCost);
+                                        break;
+                                    case "b":
+                                        // Handle Mobile Wallet payment method
+                                        Console.WriteLine("Mobile Wallet payment selected.");
+                                        break;
+                                    case "c":
+                                        flag = false;
+                                        break;
+                                    default:
+                                        Console.WriteLine("Invalid selection.");
+                                        break;
+                                }
+                            }
+                            Console.WriteLine("Processing payment...");
+                            newBooking.Status = "Confirmed";
+                            newBooking.ConfirmedStatus = true;
+                            Console.WriteLine("Booking confirmed and payment successful.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Booking not confirmed.");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Booking not confirmed.");
+                        Console.WriteLine("The selected car is not available for the chosen dates.");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("The selected car is not available for the chosen dates.");
+                    Console.WriteLine("Invalid vehicle ID.");
                 }
             }
-            else
-            {
-                Console.WriteLine("Invalid vehicle ID.");
-            }
         }
 
-        static void DisplayAllBookings()
-        {
-            if (bookings.Count == 0)
+            static void DisplayAllBookings()
             {
-                Console.WriteLine("No bookings available.");
-                return;
-            }
+                if (bookings.Count == 0)
+                {
+                    Console.WriteLine("No bookings available.");
+                    return;
+                }
 
-            Console.WriteLine("All Bookings:");
-            foreach (var booking in bookings)
-            {
-                Console.WriteLine($"Booking ID: {booking.Id}");
-                Console.WriteLine($"Start Date: {booking.StartDateTime:yyyy-MM-dd}");
-                Console.WriteLine($"End Date: {booking.EndDateTime:yyyy-MM-dd}");
-                Console.WriteLine($"Status: {booking.Status}");
-                Console.WriteLine($"Confirmed: {booking.ConfirmedStatus}");
-                Console.WriteLine(new string('-', 30));
+                Console.WriteLine("All Bookings:");
+                foreach (var booking in bookings)
+                {
+                    Console.WriteLine($"Booking ID: {booking.Id}");
+                    Console.WriteLine($"Start Date: {booking.StartDateTime:yyyy-MM-dd}");
+                    Console.WriteLine($"End Date: {booking.EndDateTime:yyyy-MM-dd}");
+                    Console.WriteLine($"Status: {booking.Status}");
+                    Console.WriteLine($"Confirmed: {booking.ConfirmedStatus}");
+                    Console.WriteLine(new string('-', 30));
+                }
             }
-        }
+        
 
 
         private static int getUniqueID = 1;
