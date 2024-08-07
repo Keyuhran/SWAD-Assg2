@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace SWAD_Assg2
+namespace SWAD_Team4_assignment_2
 {
     public class PaymentMethod
     {
