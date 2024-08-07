@@ -124,6 +124,8 @@ namespace SWAD_Team4_assignment_2
         }
 
         public List<Booking> Bookings { get; set; }
+        public List<MobileWallet> mobileWallets { get; set; }
+        public List<Card> cards { get; set; }
 
         public CarRenter(string username, string password, string id, int phoneNumber, string email, int monthlyFee, DateTime dob, bool isPrime, string licenseid, bool isVerified) : base(username, password, id, phoneNumber, email)
         {
@@ -250,14 +252,8 @@ namespace SWAD_Team4_assignment_2
 
     public class PaymentMethod
     {
-        private string id;
         private string type;
-
-        public string Id
-        {
-            get { return id; }
-            set { id = value; }
-        }
+        private decimal balance;
 
         public string Type
         {
@@ -265,13 +261,19 @@ namespace SWAD_Team4_assignment_2
             set { type = value; }
         }
 
-        public PaymentMethod(string id, string type)
+        public decimal Balance
         {
-            this.id = id;
-            this.type = type;
+            get { return Balance; }
+            set { Balance = value; }
         }
 
-        public virtual bool MakePayment(double totalAmount, string bookingId)
+        public PaymentMethod(string type, decimal balance)
+        {   
+            this.type = type;
+            this.balance = balance;
+        }
+
+        public virtual bool MakePayment(decimal totalAmount)
         {
             return true;
         }
@@ -280,7 +282,7 @@ namespace SWAD_Team4_assignment_2
     public class MobileWallet : PaymentMethod
     {
         private string name;
-        private string transactionId;
+        private string phoneNo;
 
         public string Name
         {
@@ -288,24 +290,30 @@ namespace SWAD_Team4_assignment_2
             set { name = value; }
         }
 
-        public string TranscationId
+        public string PhoneNo
         {
-            get { return transactionId; }
-            set { transactionId = value; }
+            get { return phoneNo; }
+            set { phoneNo = value; }
         }
 
-        public MobileWallet(string id, string type, string name, string transactionId) : base(id, type)
+        public MobileWallet(string type, decimal balance, string name, string phoneNo) : base(type, balance)
         {
             this.name = name;
-            this.transactionId = transactionId;
+            this.phoneNo = phoneNo;
         }
 
-        public override bool MakePayment(double totalAmount, string bookingId)
+        public override bool MakePayment(decimal totalAmount)
         {
-            Console.Write("Enter a credit card number in the format XXXX-XXXX-XXXX-XXXX:");
-            string mwInfo = Console.ReadLine(); 
-            
-            return true;
+            if (totalAmount <= Balance)
+            {
+                Balance -= totalAmount;
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
+                return false;
+            }
         }
     }
 
@@ -333,7 +341,7 @@ namespace SWAD_Team4_assignment_2
             set { holderName = value; }
         }
 
-        public Card(string id, string type, string cardNo, DateTime expiryDate, string holderName) : base(id, type)
+        public Card( string type, decimal balance, string cardNo, DateTime expiryDate, string holderName) : base(type, balance)
         {
             this.cardNo = cardNo;
             this.expiryDate = expiryDate;
