@@ -406,6 +406,7 @@ namespace SWAD_Team4_assignment_2
         }
 
 
+        // Create New Renter Account
         private static int getUniqueID = 1;
         static int UniqueID()
         {
@@ -492,13 +493,90 @@ namespace SWAD_Team4_assignment_2
                 }
             }
 
+            CarRenter newCarRenter = new CarRenter(name, id, email, phoneNumber, dob, licenseId);
+            carRenter.Add(newCarRenter);
             Console.WriteLine("\nNew Renter Account Created:");
-            Console.WriteLine($"ID: {id}");
             Console.WriteLine($"Name: {name}");
+            Console.WriteLine($"ID: {id}");
             Console.WriteLine($"Email: {email}");
             Console.WriteLine($"Phone Number: {phoneNumber}");
             Console.WriteLine($"Date of Birth: {dob:yyyy-MM-dd}");
             Console.WriteLine($"License ID: {licenseId}");
+        }
+
+
+        static void CreateNewOwnerAccount()
+        {
+            Console.WriteLine("\nEnter Username:");
+            string name = Console.ReadLine();
+
+            string email;
+            while (true)
+            {
+                Console.WriteLine("\nEnter Email:");
+                email = Console.ReadLine();
+                if (email.Contains("@") && email.Contains("."))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid email format. Please enter a valid email.");
+                }
+            }
+
+            string id = UniqueID().ToString();
+
+            int phoneNumber;
+            while (true)
+            {
+                Console.Write("Enter Phone Number: ");
+                string phoneNumberInput = Console.ReadLine();
+
+                if (phoneNumberInput.Length == 8 && (phoneNumberInput.StartsWith("8") || phoneNumberInput.StartsWith("9")) && int.TryParse(phoneNumberInput, out phoneNumber))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid phone number. It must start with 8 or 9 and be 8 digits long.");
+                }
+            }
+
+            DateTime dob;
+            while (true)
+            {
+                Console.Write("Enter Date of Birth (YYYY-MM-DD): ");
+                string dobInput = Console.ReadLine();
+
+                if (DateTime.TryParseExact(dobInput, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dob))
+                {
+                    int age = DateTime.Now.Year - dob.Year;
+                    if (dob > DateTime.Now.AddYears(-age)) age--;
+                    if (age >= 18)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("You cannot register as you are underage.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+                }
+            }
+
+            CarOwner newCarOwner = new CarOwner(name, id, email, phoneNumber, dob, 0.0);
+            carOwners.Add(newCarOwner);
+
+            Console.WriteLine("\nNew Car Owner Account Created:");
+            Console.WriteLine($"Name: {name}");
+            Console.WriteLine($"ID: {id}");
+            Console.WriteLine($"Email: {email}");
+            Console.WriteLine($"Phone Number: {phoneNumber}");
+            Console.WriteLine($"Date of Birth: {dob:yyyy-MM-dd}");
         }
     }
 }
