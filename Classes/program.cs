@@ -1,5 +1,5 @@
 // See https://aka.ms/new-console-template for more information
-using SWAD_Assg2;
+using SWAD_Team4_assignment_2;
 using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.Net.NetworkInformation;
@@ -45,7 +45,7 @@ namespace SWAD_Team4_assignment_2
                         MakeBooking();
                         break;
                     case "3":
-                        MakeBooking();
+                        DisplayAllBookings();
                         break;
                     case "4":
                         CreateNewRenterAccount();
@@ -377,7 +377,28 @@ namespace SWAD_Team4_assignment_2
             }
         }
 
-                private static int getUniqueID = 1;
+        static void DisplayAllBookings()
+        {
+            if (bookings.Count == 0)
+            {
+                Console.WriteLine("No bookings available.");
+                return;
+            }
+
+            Console.WriteLine("All Bookings:");
+            foreach (var booking in bookings)
+            {
+                Console.WriteLine($"Booking ID: {booking.Id}");
+                Console.WriteLine($"Start Date: {booking.StartDateTime:yyyy-MM-dd}");
+                Console.WriteLine($"End Date: {booking.EndDateTime:yyyy-MM-dd}");
+                Console.WriteLine($"Status: {booking.Status}");
+                Console.WriteLine($"Confirmed: {booking.ConfirmedStatus}");
+                Console.WriteLine(new string('-', 30));
+            }
+        }
+
+
+        private static int getUniqueID = 1;
         static int UniqueID()
         {
             return getUniqueID++;
@@ -474,8 +495,7 @@ namespace SWAD_Team4_assignment_2
     }
 }
 
-    }
+    
 
-}
 
 
