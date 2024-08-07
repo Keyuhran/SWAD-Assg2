@@ -6,16 +6,10 @@ using System.Threading.Tasks;
 
 namespace SWAD_Team4_assignment_2
 {
-    public class MobileWallet:PaymentMethod
+    public class MobileWallet : PaymentMethod
     {
         private string name;
-        private string transactionId;
-
-        public MobileWallet(string id, string type, string name, string transactionId) : base(id,type)
-        {
-            this.name = name;
-            this.transactionId = transactionId;
-        }
+        private string phoneNo;
 
         public string Name
         {
@@ -23,10 +17,30 @@ namespace SWAD_Team4_assignment_2
             set { name = value; }
         }
 
-        public string TranscationId
+        public string PhoneNo
         {
-            get { return transactionId; }
-            set { transactionId = value; }
+            get { return phoneNo; }
+            set { phoneNo = value; }
+        }
+
+        public MobileWallet(string type, decimal balance, string name, string phoneNo) : base(type, balance)
+        {
+            this.name = name;
+            this.phoneNo = phoneNo;
+        }
+
+        public override bool MakePayment(decimal totalAmount)
+        {
+            if (totalAmount <= Balance)
+            {
+                Balance -= totalAmount;
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
+                return false;
+            }
         }
     }
 }

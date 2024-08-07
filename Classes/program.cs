@@ -1,37 +1,36 @@
-// See https://aka.ms/new-console-template for more information
-using SWAD_Team4_assignment_2;
-using System.Diagnostics.Metrics;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Net.NetworkInformation;
-using System.Text.RegularExpressions;
+using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
+using SWAD_Team4_assignment_2;
 
 namespace SWAD_Team4_assignment_2
 {
     class Program
     {
         static List<Car> cars = new List<Car>();
+        static List<CarRenter> carRenters = new List<CarRenter>();
+        static List<CarOwner> carOwners = new List<CarOwner>();
         static List<AvailabilitySchedule> availabilitySchedules = new List<AvailabilitySchedule>();
         static List<Booking> bookings = new List<Booking>();
         static int nextCarId = 1; // Static counter for car IDs
 
-
-
         static void Main()
         {
+
             cars.Add(new Car("1", "Model S", "Tesla", 2022, 15000, "Red", true, "ABC123", 100));
             cars.Add(new Car("2", "Mustang", "Ford", 2021, 20000, "Blue", true, "XYZ789", 80));
-
-            // Main menu
+            DateTime bday = new DateTime(2024, 8, 16);
+            carRenters.Add(new CarRenter("Pofrz", "password", "001", 84048488, "user2@example.com", 0, bday, false, "licenseid", true));
+            carRenters.Add(new CarRenter("KK47", "password", "002", 84048488, "user2@example.com", 0, bday, false, "licenseid", true));
+            // Log In / Create User
             while (true)
             {
                 Console.WriteLine("Welcome to iCar Car Rental System");
-                Console.WriteLine("1. Add new vehicle ");
-                Console.WriteLine("2. Make a Booking ");
-                Console.WriteLine("3. Display all Bookings ");
-                Console.WriteLine("4. ");
-                Console.WriteLine("5. ");
-                Console.WriteLine("6. ");
-                Console.WriteLine("7. Exit ");
+                Console.WriteLine("1. Log In");
+                Console.WriteLine("2. Create Account");
+                Console.WriteLine("3. Exit");
                 Console.Write("\nPlease select an option: ");
 
                 string choice = Console.ReadLine();
@@ -39,24 +38,19 @@ namespace SWAD_Team4_assignment_2
                 switch (choice)
                 {
                     case "1":
-                        AddNewVehicle();
+                        LogIn();
                         break;
                     case "2":
-                        MakeBooking();
+                        CreateAccount();
+                        Console.Write("Do you wish to Log In? (Y/N): ");
+                        string logchoice = Console.ReadLine();
+                        if (logchoice.ToLower() == "y")
+                        {
+                            LogIn();
+                            break;
+                        }
                         break;
                     case "3":
-                        DisplayAllBookings();
-                        break;
-                    case "4":
-                        CreateNewRenterAccount();
-                        break;
-                    case "5":
-                        MakeBooking();
-                        break;
-                    case "6":
-                        MakeBooking();
-                        break;
-                    case "7":
                         return;
                     default:
                         Console.WriteLine("\nInvalid option. Please try again.\n");
@@ -65,7 +59,114 @@ namespace SWAD_Team4_assignment_2
             }
         }
 
-               static void AddNewVehicle()
+        static void LogIn()
+        {
+            Console.WriteLine("\nCarRenter or CarOwner");
+            Console.WriteLine("1. CarRenter");
+            Console.WriteLine("2. CarOwner");
+            Console.WriteLine("3. Back");
+            Console.Write("\nPlease select an option: ");
+
+            // Request for user information
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    Console.Write("Enter username: ");
+                    string name = Console.ReadLine();
+                    Console.Write("Enter password: ");
+                    string password = Console.ReadLine();
+                    CarRenter foundUser = carRenters.Find(carRenter => carRenter.Username == name);
+                    if (foundUser != null && foundUser.Password == password)
+                    {
+                        Console.WriteLine("Welcome back!");
+                        while (true)
+                        {
+                            Console.WriteLine("\niCar System");
+                            Console.WriteLine("1. Make a Booking");
+                            Console.WriteLine("2. Display all Bookings");
+                            Console.WriteLine("3. Exit");
+                            Console.Write("\nPlease select an option: ");
+
+                            string choice2 = Console.ReadLine();
+
+                            switch (choice2)
+                            {
+                                case "1":
+                                    MakeBooking();
+                                    break;
+                                case "2":
+                                    DisplayAllBookings();
+                                    break;
+                                case "3":
+                                    return;
+                                default:
+                                    Console.WriteLine("\nInvalid option. Please try again.\n");
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid username or password");
+                        Console.WriteLine("Please try again!");
+                        Console.WriteLine("\n");
+                        LogIn();
+                    }
+                    break;
+                case "2":
+                    Console.Write("Enter username: ");
+                    string name2 = Console.ReadLine();
+                    Console.Write("Enter password: ");
+                    string password2 = Console.ReadLine();
+                    CarOwner foundUser2 = carOwners.Find(carOwner => carOwner.Username == name2);
+                    if (foundUser2 != null && foundUser2.Password == password2)
+                    {
+                        Console.WriteLine("Welcome back!");
+                        while (true)
+                        {
+                            Console.WriteLine("\niCar System");
+                            Console.WriteLine("1. Add New Vehicle");
+                            Console.WriteLine("2. Exit");
+                            Console.Write("\nPlease select an option: ");
+
+                            string choice2 = Console.ReadLine();
+
+                            switch (choice2)
+                            {
+                                case "1":
+                                    AddNewVehicle();
+                                    break;
+                                case "2":
+                                    return;
+                                default:
+                                    Console.WriteLine("\nInvalid option. Please try again.\n");
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid username or password");
+                        Console.WriteLine("Please try again!");
+                        Console.WriteLine("\n");
+                        LogIn();
+                    }
+                    break;
+                case "3":
+                    Console.WriteLine("\n");
+                    Main();
+                    break;
+            }
+        }
+
+        static void CreateAccount()
+        {
+
+        }
+
+        static void AddNewVehicle()
         {
             Console.WriteLine("Car Owner selects the add new vehicle option");
 
@@ -113,7 +214,7 @@ namespace SWAD_Team4_assignment_2
             {
                 Console.WriteLine("Welcome to the Insurance terminal!");
 
-                Console.Write("Enter Insurance ID e.g.(S1234567A:");
+                Console.Write("Enter Insurance ID:");
                 insuranceId = Console.ReadLine();
                 if (string.IsNullOrEmpty(insuranceId))
                 {
@@ -121,7 +222,7 @@ namespace SWAD_Team4_assignment_2
                     continue;
                 }
 
-                Console.Write("Enter Insurance Name):");
+                Console.Write("Enter Insurance Name:");
                 insuranceName = Console.ReadLine();
                 if (string.IsNullOrEmpty(insuranceName)) { Console.WriteLine("Insurance Name is required!"); continue; }
 
@@ -136,12 +237,6 @@ namespace SWAD_Team4_assignment_2
                 if (!DateTime.TryParseExact(Console.ReadLine(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out expiryDate))
                 {
                     Console.WriteLine("Invalid date format! Please enter a valid expiry date.");
-                    continue;
-                }
-
-                if (expiryDate < DateTime.Now)
-                {
-                    Console.WriteLine("Insurance expiry date cannot be in the past.");
                     continue;
                 }
 
@@ -275,11 +370,6 @@ namespace SWAD_Team4_assignment_2
                 }
             }
         }
-    
-
-
-
-
 
         static void MakeBooking()
         {
@@ -351,7 +441,6 @@ namespace SWAD_Team4_assignment_2
                         break;
                     }
                 }
-
                 if (isAvailable)
                 {
                     Booking newBooking = new Booking(Guid.NewGuid().ToString(), startDate, endDate, "Pending", false);
@@ -363,7 +452,42 @@ namespace SWAD_Team4_assignment_2
                     string confirm = Console.ReadLine();
                     if (confirm.ToLower() == "yes")
                     {
-                        // Simulate payment process
+                        bool flag = true;
+                        bool flag2 = true;
+                        Console.WriteLine("Payment Methods:");
+                        Console.WriteLine("a) Card");
+                        Console.WriteLine("b) Mobile Wallet");
+                        Console.WriteLine("c) Exit");
+                        Console.Write("Select payment method: ");
+                        string paymentType = Console.ReadLine();
+                        while (flag)
+                        {
+                            switch (paymentType)
+                            {
+                                case "a":
+                                    // Handle Card payment method
+                                    Console.WriteLine("Card payment selected.");
+                                    Console.Write("Name registered under Mobile Wallet: ");
+                                    string name = Console.ReadLine();
+                                    Console.Write("Balance in Mobile Wallet (2dp): ");
+                                    decimal balance = decimal.Parse(Console.ReadLine());
+                                    Console.Write("PhoneNo registered under Mobile Wallet: ");
+                                    string phoneNo = Console.ReadLine();
+                                    MobileWallet mobileWallet = new MobileWallet("Mobile Wallet", balance, name, phoneNo);
+                                    mobileWallet.MakePayment(totalCost);
+                                    break;
+                                case "b":
+                                    // Handle Mobile Wallet payment method
+                                    Console.WriteLine("Mobile Wallet payment selected.");
+                                    break;
+                                case "c":
+                                    flag = false;
+                                    break;
+                                default:
+                                    Console.WriteLine("Invalid selection.");
+                                    break;
+                            }
+                        }
                         Console.WriteLine("Processing payment...");
                         newBooking.Status = "Confirmed";
                         newBooking.ConfirmedStatus = true;
@@ -406,7 +530,6 @@ namespace SWAD_Team4_assignment_2
         }
 
 
-        // Create New Renter Account
         private static int getUniqueID = 1;
         static int UniqueID()
         {
@@ -580,8 +703,3 @@ namespace SWAD_Team4_assignment_2
         }
     }
 }
-
-    
-
-
-
