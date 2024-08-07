@@ -1,15 +1,15 @@
-// See https://aka.ms/new-console-template for more information
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using SWAD_Assg2;
-using System.Diagnostics.Metrics;
-using System.Text.RegularExpressions;
 
 namespace SWAD_Team4_assignment_2
 {
     class Program
     {
         static List<Car> cars = new List<Car>();
-        static List<CarOwner> carOwners = new List<CarOwner>();
-        static List<ICarAdmin> ICarAdmins = new List<ICarAdmin>();
+        static List<AvailabilitySchedule> availabilitySchedules = new List<AvailabilitySchedule>();
+        static int nextCarId = 1; // Static counter for car IDs
 
         static void Main()
         {
@@ -34,19 +34,19 @@ namespace SWAD_Team4_assignment_2
                         AddNewVehicle();
                         break;
                     case "2":
-                        
+                        // Add functionality for option 2
                         break;
                     case "3":
-                        
+                        // Add functionality for option 3
                         break;
                     case "4":
-                        
+                        // Add functionality for option 4
                         break;
                     case "5":
-                        
+                        // Add functionality for option 5
                         break;
                     case "6":
-                        
+                        // Add functionality for option 6
                         break;
                     case "7":
                         return;
@@ -69,25 +69,25 @@ namespace SWAD_Team4_assignment_2
 
             while (true)
             {
-                Console.WriteLine("Enter Car Make:");
+                Console.Write("Enter Car Maker:");
                 make = Console.ReadLine();
                 if (string.IsNullOrEmpty(make)) { Console.WriteLine("Car Make is required!"); continue; }
 
-                Console.WriteLine("Enter Car Model:");
+                Console.Write("Enter Car Model:");
                 model = Console.ReadLine();
                 if (string.IsNullOrEmpty(model)) { Console.WriteLine("Car Model is required!"); continue; }
 
-                Console.WriteLine("Enter Car Year:");
+                Console.Write("Enter Car Year:");
                 if (!int.TryParse(Console.ReadLine(), out year)) { Console.WriteLine("Year must be an integer!"); continue; }
 
-                Console.WriteLine("Enter Car Mileage:");
+                Console.Write("Enter Car Mileage(km):");
                 if (!int.TryParse(Console.ReadLine(), out mileage)) { Console.WriteLine("Mileage must be an integer!"); continue; }
 
-                Console.WriteLine("Enter Car Color:");
+                Console.Write("Enter Car Color:");
                 color = Console.ReadLine();
                 if (string.IsNullOrEmpty(color)) { Console.WriteLine("Car Color is required!"); continue; }
 
-                Console.WriteLine("Enter Car License Plate:");
+                Console.Write("Enter Car License Plate:");
                 licensePlate = Console.ReadLine();
                 if (string.IsNullOrEmpty(licensePlate)) { Console.WriteLine("License Plate is required!"); continue; }
 
@@ -97,60 +97,168 @@ namespace SWAD_Team4_assignment_2
             Console.WriteLine("Car details successfully entered!");
 
             // Enter Insurance Details
-            Console.WriteLine("Redirecting to Insurance Terminal...");
-            Console.WriteLine("Enter Insurance ID:");
-            insuranceId = Console.ReadLine();
-            insuranceStatus = !string.IsNullOrEmpty(insuranceId);
+            string insuranceName, policyStatus;
+            int coverageLimit;
+            DateTime expiryDate;
 
-            if (!insuranceStatus)
+            while (true)
             {
-                Console.WriteLine("Insurance not registered. Redirecting to 3rd party site...");
-                // Simulation of redirecting to 3rd party site
-                Console.WriteLine("Re-enter Insurance ID:");
+                Console.WriteLine("Welcome to the Insurance terminal!");
+
+                Console.Write("Enter Insurance ID:");
                 insuranceId = Console.ReadLine();
+                if (string.IsNullOrEmpty(insuranceId))
+                {
+                    Console.WriteLine("Please enter insurance info.");
+                    continue;
+                }
+
+                Console.Write("Enter Insurance Name:");
+                insuranceName = Console.ReadLine();
+                if (string.IsNullOrEmpty(insuranceName)) { Console.WriteLine("Insurance Name is required!"); continue; }
+
+                Console.Write("Enter Policy Status (e.g., active, expired):");
+                policyStatus = Console.ReadLine();
+                if (string.IsNullOrEmpty(policyStatus)) { Console.WriteLine("Policy Status is required!"); continue; }
+
+                Console.Write("Enter Coverage Limit ($):");
+                if (!int.TryParse(Console.ReadLine(), out coverageLimit)) { Console.WriteLine("Coverage Limit must be an integer!"); continue; }
+
+                Console.Write("Enter Expiry Date (dd-mm-yyyy):");
+                if (!DateTime.TryParseExact(Console.ReadLine(), "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out expiryDate))
+                {
+                    Console.WriteLine("Invalid date format! Please enter a valid expiry date.");
+                    continue;
+                }
+
                 insuranceStatus = !string.IsNullOrEmpty(insuranceId);
+                break;
             }
 
+            Insurance newInsurance = new Insurance(insuranceId, expiryDate, coverageLimit, insuranceName, policyStatus);
             Console.WriteLine("Insurance successfully entered!");
 
             // Enter Rental Rate
             while (true)
             {
-                Console.WriteLine("Enter Rental Rate ($/day):");
+                Console.Write("Enter Rental Rate ($/day):");
                 if (!int.TryParse(Console.ReadLine(), out rentalRate)) { Console.WriteLine("Rental Rate must be an integer!"); continue; }
                 break;
             }
 
             // Enter Schedule
-            DateTime scheduleDate;
+            DateTime startDate, endDate;
+            List<DateTime> unavailableDates = new List<DateTime>();
+
             while (true)
             {
-                Console.WriteLine("Enter Schedule Date (e.g. 1/1/2024):");
-                string dateInput = Console.ReadLine();
-                if (string.IsNullOrEmpty(dateInput))
+                while (true)
                 {
-                    Console.WriteLine("Please enter a date!");
-                    continue;
+                    Console.Write("Enter Start Date (dd-mm-yyyy):");
+                    string startDateInput = Console.ReadLine();
+                    if (string.IsNullOrEmpty(startDateInput))
+                    {
+                        Console.Write("Please enter a start date!");
+                        continue;
+                    }
+                    if (!DateTime.TryParseExact(startDateInput, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
+                    {
+                        Console.Write("Invalid date format! Please enter a valid start date.");
+                        continue;
+                    }
+                    break;
                 }
-                if (!DateTime.TryParse(dateInput, out scheduleDate))
+
+                while (true)
                 {
-                    Console.WriteLine("Invalid date format! Please enter a valid date.");
-                    continue;
+                    Console.Write("Enter End Date (dd-mm-yyyy):");
+                    string endDateInput = Console.ReadLine();
+                    if (string.IsNullOrEmpty(endDateInput))
+                    {
+                        Console.Write("Please enter an end date!");
+                        continue;
+                    }
+                    if (!DateTime.TryParseExact(endDateInput, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
+                    {
+                        Console.Write("Invalid date format! Please enter a valid end date.");
+                        continue;
+                    }
+                    if (endDate < startDate)
+                    {
+                        Console.Write("End date cannot be earlier than start date. Please enter a valid end date.");
+                        continue;
+                    }
+                    break;
                 }
-                break;
+
+                while (true)
+                {
+                    Console.WriteLine("Do you want to add unavailable dates within the selected range? (yes/no): ");
+                    string addUnavailableDates = Console.ReadLine().ToLower();
+                    if (addUnavailableDates == "yes")
+                    {
+                        while (true)
+                        {
+                            Console.Write("Enter an unavailable date (dd-mm-yyyy) within the range or type 'done' to finish: ");
+                            string unavailableDateInput = Console.ReadLine();
+                            if (unavailableDateInput.ToLower() == "done") break;
+
+                            DateTime unavailableDate;
+                            if (!DateTime.TryParseExact(unavailableDateInput, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out unavailableDate))
+                            {
+                                Console.Write("Invalid date format! Please enter a valid date.");
+                                continue;
+                            }
+                            if (unavailableDate < startDate || unavailableDate > endDate)
+                            {
+                                Console.Write("Unavailable date must be within the selected range. Please enter a valid date.");
+                                continue;
+                            }
+                            unavailableDates.Add(unavailableDate);
+                        }
+                    }
+                    break;
+                }
+
+                Console.WriteLine("Date range added successfully!");
+
+                Console.Write("Do you want to add more date ranges? (yes/no): ");
+                string response = Console.ReadLine().ToLower();
+                if (response != "yes")
+                {
+                    break;
+                }
             }
 
+            Console.WriteLine("All unavailable dates have been entered.");
+
             // Create Car Listing
-            Car newCar = new Car(Guid.NewGuid().ToString(), model, make, year, mileage, color, insuranceStatus, licensePlate, rentalRate);
+            Car newCar = new Car(nextCarId++.ToString(), model, make, year, mileage, color, insuranceStatus, licensePlate, rentalRate);
             cars.Add(newCar);
 
-            Console.WriteLine("Car listing created successfully!");
+            // Create Availability Schedule
+            AvailabilitySchedule newSchedule = new AvailabilitySchedule(startDate, endDate, unavailableDates);
+            availabilitySchedules.Add(newSchedule);
+
+            Console.Write("Car listing and availability schedule created successfully!");
 
             // Display all cars
             Console.WriteLine("\nCurrent Car Listings:");
             foreach (var car in cars)
             {
                 Console.WriteLine($"{car.Brand} {car.Model} ({car.Year}) - ${car.RentalRate}/day");
+            }
+
+            // Display all availability schedules
+            Console.WriteLine("\nCurrent Availability Schedules:");
+            foreach (var schedule in availabilitySchedules)
+            {
+                Console.WriteLine($"Start Date: {schedule.StartDate:dd-MM-yyyy}, End Date: {schedule.EndDate:dd-MM-yyyy}");
+                Console.WriteLine("Unavailable Dates:");
+                foreach (var date in schedule.UnavailableDates)
+                {
+                    Console.WriteLine(date.ToString("dd-MM-yyyy"));
+                }
             }
         }
     }
