@@ -26,8 +26,8 @@ namespace SWAD_Team4_assignment_2
             {
                 Console.WriteLine("Welcome to iCar Car Rental System");
                 Console.WriteLine("1. Add new vehicle ");
-                Console.WriteLine("2. Make a Booking");
-                Console.WriteLine("3. Display all Bookings");
+                Console.WriteLine("2. Make a Booking ");
+                Console.WriteLine("3. Display all Bookings ");
                 Console.WriteLine("4. ");
                 Console.WriteLine("5. ");
                 Console.WriteLine("6. ");
