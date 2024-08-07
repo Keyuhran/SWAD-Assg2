@@ -13,6 +13,9 @@ namespace SWAD_Team4_assignment_2
 
         static void Main()
         {
+
+            cars.Add(new Car("1", "Model S", "Tesla", 2022, 15000, "Red", true, "ABC123", 100));
+            cars.Add(new Car("2", "Mustang", "Ford", 2021, 20000, "Blue", true, "XYZ789", 80));
             // Main menu
             while (true)
             {
