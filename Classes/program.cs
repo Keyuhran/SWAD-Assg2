@@ -261,5 +261,88 @@ namespace SWAD_Team4_assignment_2
                 }
             }
         }
+
+        static void MakeBooking()
+{
+    Console.WriteLine("Available cars:");
+    foreach (var car in cars)
+    {
+        Console.WriteLine($"ID: {car.Id}, Model: {car.Model}, Brand: {car.Brand}, Year: {car.Year}, Mileage: {car.Mileage}, Color: {car.Color}, Rental Rate: {car.RentalRate}");
+    }
+
+    Console.Write("Enter vehicle ID: ");
+    string input = Console.ReadLine();
+    Car selectedCar = cars.Find(c => c.Id == input);
+
+    if (selectedCar != null)
+    {
+        DateTime startDate;
+        DateTime endDate;
+        while (true)
+        {
+            Console.Write("Enter start date (yyyy-mm-dd): ");
+            startDate = DateTime.Parse(Console.ReadLine());
+            Console.Write("Enter end date (yyyy-mm-dd): ");
+            endDate = DateTime.Parse(Console.ReadLine());
+
+            if (endDate >= startDate)
+            {
+                break;
+            }
+            else
+            {
+                Console.WriteLine("End date cannot be before start date. Please re-enter the dates.");
+            }
+        }
+
+        // Calculate the total cost
+        TimeSpan rentalPeriod = endDate - startDate;
+        int rentalDays = rentalPeriod.Days + 1; // Include the start date as a rental day
+        decimal totalCost = rentalDays * selectedCar.RentalRate;
+        Console.WriteLine($"Total cost for the booking: ${totalCost}");
+
+        // Check for overlapping bookings
+        bool isAvailable = true;
+        foreach (var booking in bookings)
+        {
+            if (booking.Status == "Confirmed" && booking.StartDateTime < endDate && startDate < booking.EndDateTime)
+            {
+                isAvailable = false;
+                break;
+            }
+        }
+
+        if (isAvailable)
+        {
+            Booking newBooking = new Booking(Guid.NewGuid().ToString(), startDate, endDate, "Pending", false);
+            bookings.Add(newBooking);
+            Console.WriteLine("Booking created successfully.");
+
+            // Confirm booking and make payment
+            Console.Write("Do you want to confirm the booking and proceed to payment? (yes/no): ");
+            string confirm = Console.ReadLine();
+            if (confirm.ToLower() == "yes")
+            {
+                // Simulate payment process
+                Console.WriteLine("Processing payment...");
+                newBooking.Status = "Confirmed";
+                newBooking.ConfirmedStatus = true;
+                Console.WriteLine("Booking confirmed and payment successful.");
+            }
+            else
+            {
+                Console.WriteLine("Booking not confirmed.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("The selected car is not available for the chosen dates.");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Invalid vehicle ID.");
+    }
+}
     }
 }
