@@ -14,7 +14,6 @@ namespace SWAD_Team4_assignment_2
         static List<CarOwner> carOwners = new List<CarOwner>();
         static List<AvailabilitySchedule> availabilitySchedules = new List<AvailabilitySchedule>();
         static List<Booking> bookings = new List<Booking>();
-        static List<CarRenter> renters = new List<CarRenter>();
         static int nextCarId = 1; // Static counter for car IDs
 
         static void Main()
@@ -655,7 +654,7 @@ namespace SWAD_Team4_assignment_2
             }
 
             CarRenter newCarRenter = new CarRenter(username,password, id, phoneNumber, email, monthlyFee, dob, isPrime, licenseId, isVerified);
-            renters.Add(newCarRenter);
+            carRenters.Add(newCarRenter);
             Console.WriteLine("\nNew Renter Account Created:");
             Console.WriteLine($"Name: {username}");
             Console.WriteLine($"ID: {id}");
@@ -670,7 +669,7 @@ namespace SWAD_Team4_assignment_2
         {
             Console.WriteLine("\nEnter Username:");
             string username = Console.ReadLine();
-            Console.WriteLine("\nEnter Username:");
+            Console.WriteLine("\nEnter Password:");
             string password = Console.ReadLine();
 
             string email;
@@ -693,7 +692,7 @@ namespace SWAD_Team4_assignment_2
             int phoneNumber;
             while (true)
             {
-                Console.Write("Enter Phone Number: ");
+                Console.WriteLine("Enter Phone Number: ");
                 string phoneNumberInput = Console.ReadLine();
 
                 if (phoneNumberInput.Length == 8 && (phoneNumberInput.StartsWith("8") || phoneNumberInput.StartsWith("9")) && int.TryParse(phoneNumberInput, out phoneNumber))
@@ -709,7 +708,7 @@ namespace SWAD_Team4_assignment_2
             DateTime dob;
             while (true)
             {
-                Console.Write("Enter Date of Birth (YYYY-MM-DD): ");
+                Console.WriteLine("Enter Date of Birth (YYYY-MM-DD): ");
                 string dobInput = Console.ReadLine();
 
                 if (DateTime.TryParseExact(dobInput, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dob))
