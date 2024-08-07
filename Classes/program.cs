@@ -135,7 +135,8 @@ namespace SWAD_Team4_assignment_2
                         {
                             Console.WriteLine("\niCar System");
                             Console.WriteLine("1. Add New Vehicle");
-                            Console.WriteLine("2. Exit");
+                            Console.WriteLine("2. Car Availability Schedule");
+                            Console.WriteLine("3. Exit");
                             Console.Write("\nPlease select an option: ");
 
                             string choice2 = Console.ReadLine();
@@ -146,6 +147,8 @@ namespace SWAD_Team4_assignment_2
                                     AddNewVehicle();
                                     break;
                                 case "2":
+                                    DisplayCarAvailabilityScheduleById();
+                                case "3":
                                     return;
                                 default:
                                     Console.WriteLine("\nInvalid option. Please try again.\n");
@@ -210,6 +213,7 @@ namespace SWAD_Team4_assignment_2
             bool insuranceStatus = false;
             string insuranceId = "";
 
+            // Loop for car details entry with validation
             while (true)
             {
                 Console.Write("Enter Car Maker:");
@@ -244,11 +248,12 @@ namespace SWAD_Team4_assignment_2
             int coverageLimit;
             DateTime expiryDate;
 
+            // Loop for insurance details entry with validation
             while (true)
             {
                 Console.WriteLine("Welcome to the Insurance terminal!");
 
-                Console.Write("Enter Insurance ID:");
+                Console.Write("Enter Insurance ID (e.g., S1234567A):");
                 insuranceId = Console.ReadLine();
                 if (string.IsNullOrEmpty(insuranceId))
                 {
@@ -256,7 +261,7 @@ namespace SWAD_Team4_assignment_2
                     continue;
                 }
 
-                Console.Write("Enter Insurance Name:");
+                Console.Write("Enter Insurance Name (e.g., NTUC INCOME) :");
                 insuranceName = Console.ReadLine();
                 if (string.IsNullOrEmpty(insuranceName)) { Console.WriteLine("Insurance Name is required!"); continue; }
 
@@ -274,10 +279,17 @@ namespace SWAD_Team4_assignment_2
                     continue;
                 }
 
+                if (expiryDate < DateTime.Now)
+                {
+                    Console.WriteLine("Insurance expiry date cannot be in the past.");
+                    continue;
+                }
+
                 insuranceStatus = !string.IsNullOrEmpty(insuranceId);
                 break;
             }
 
+            // Create new insurance object
             Insurance newInsurance = new Insurance(insuranceId, expiryDate, coverageLimit, insuranceName, policyStatus);
             Console.WriteLine("Insurance successfully entered!");
 
@@ -295,6 +307,7 @@ namespace SWAD_Team4_assignment_2
 
             while (true)
             {
+                // Loop for start date entry with validation
                 while (true)
                 {
                     Console.Write("Enter Start Date (dd-mm-yyyy):");
@@ -309,12 +322,18 @@ namespace SWAD_Team4_assignment_2
                         Console.Write("Invalid date format! Please enter a valid start date.");
                         continue;
                     }
+                    if (startDate > newInsurance.ExpiryDate)
+                    {
+                        Console.Write("Start date cannot be after the insurance expiry date. Please enter a valid start date.");
+                        continue;
+                    }
                     break;
                 }
 
+                // Loop for end date entry with validation
                 while (true)
                 {
-                    Console.Write("Enter End Date (dd-mm-yyyy):");
+                    Console.WriteLine("Enter End Date (dd-mm-yyyy):");
                     string endDateInput = Console.ReadLine();
                     if (string.IsNullOrEmpty(endDateInput))
                     {
@@ -334,6 +353,14 @@ namespace SWAD_Team4_assignment_2
                     break;
                 }
 
+                // Check if the entered date range overlaps with an existing schedule
+                if (IsDateRangeOverlapping(startDate, endDate))
+                {
+                    Console.WriteLine("The entered date range overlaps with an existing schedule. Please try again.");
+                    continue;
+                }
+
+                // Loop to add unavailable dates within the selected range
                 while (true)
                 {
                     Console.WriteLine("Do you want to add unavailable dates within the selected range? (yes/no): ");
@@ -379,9 +406,9 @@ namespace SWAD_Team4_assignment_2
             Car newCar = new Car(nextCarId++.ToString(), model, make, year, mileage, color, insuranceStatus, licensePlate, rentalRate);
             cars.Add(newCar);
 
-            // Create Availability Schedule
+            // Create Availability Schedule and add it to the car
             AvailabilitySchedule newSchedule = new AvailabilitySchedule(startDate, endDate, unavailableDates);
-            availabilitySchedules.Add(newSchedule);
+            newCar.AddAvailabilitySchedule(newSchedule);
 
             Console.Write("Car listing and availability schedule created successfully!");
 
@@ -394,7 +421,53 @@ namespace SWAD_Team4_assignment_2
 
             // Display all availability schedules
             Console.WriteLine("\nCurrent Availability Schedules:");
-            foreach (var schedule in availabilitySchedules)
+            foreach (var car in cars)
+            {
+                foreach (var schedule in car.AvailabilitySchedules)
+                {
+                    Console.WriteLine($"Car: {car.Brand} {car.Model} ({car.Year})");
+                    Console.WriteLine($"Start Date: {schedule.StartDate:dd-MM-yyyy}, End Date: {schedule.EndDate:dd-MM-yyyy}");
+                    Console.WriteLine("Unavailable Dates:");
+                    foreach (var date in schedule.UnavailableDates)
+                    {
+                        Console.WriteLine(date.ToString("dd-MM-yyyy"));
+                    }
+                }
+            }
+        }
+
+        static bool IsDateRangeOverlapping(DateTime startDate, DateTime endDate)
+        {
+            foreach (var car in cars)
+            {
+                foreach (var schedule in car.AvailabilitySchedules)
+                {
+                    if ((startDate >= schedule.StartDate && startDate <= schedule.EndDate) ||
+                        (endDate >= schedule.StartDate && endDate <= schedule.EndDate) ||
+                        (startDate <= schedule.StartDate && endDate >= schedule.EndDate))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        static void DisplayCarAvailabilityScheduleById()
+        {
+            Console.Write("Enter Car ID to view availability schedule: ");
+            string carId = Console.ReadLine();
+
+            Car car = cars.Find(c => c.Id == carId);
+            if (car == null)
+            {
+                Console.WriteLine("Car not found.");
+                return;
+            }
+
+            Console.WriteLine($"\nAvailability Schedules for Car: {car.Brand} {car.Model} ({car.Year})");
+
+            foreach (var schedule in car.AvailabilitySchedules)
             {
                 Console.WriteLine($"Start Date: {schedule.StartDate:dd-MM-yyyy}, End Date: {schedule.EndDate:dd-MM-yyyy}");
                 Console.WriteLine("Unavailable Dates:");
@@ -404,6 +477,8 @@ namespace SWAD_Team4_assignment_2
                 }
             }
         }
+    }
+}
 
         static void MakeBooking()
         {
