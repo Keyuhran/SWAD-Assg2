@@ -13,7 +13,7 @@ namespace SWAD_Team4_assignment_2
     {
         private double earnings;
 
-        public CarOwner(string username, string password, string id, int phoneNumber, string email, double earnings) : base(username, password, id, phoneNumber, email)
+        public CarOwner(string username, string password, string id, int phoneNumber, string email, DateTime dob, double earnings) : base(username, password, id, phoneNumber, email)
         {
             this.earnings = earnings;
             this.Cars = new List<Car>();

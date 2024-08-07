@@ -5,24 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace SWAD_Assg2
+namespace SWAD_Team4_assignment_2
 {
     public class PaymentMethod
     {
-        private string id;
         private string type;
-
-        public PaymentMethod(string id, string type)
-        {
-            this.id = id;
-            this.type = type;
-        }
-
-        public string Id
-        {
-            get { return id; }
-            set { id = value; }
-        }
+        private decimal balance;
 
         public string Type
         {
@@ -30,6 +18,21 @@ namespace SWAD_Assg2
             set { type = value; }
         }
 
+        public decimal Balance
+        {
+            get { return Balance; }
+            set { Balance = value; }
+        }
 
+        public PaymentMethod(string type, decimal balance)
+        {   
+            this.type = type;
+            this.balance = balance;
+        }
+
+        public virtual bool MakePayment(decimal totalAmount)
+        {
+            return true;
+        }
     }
 }

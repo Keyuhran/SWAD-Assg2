@@ -5,7 +5,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SWADAssg2
+namespace SWAD_Team4_assignment_2
 {
     public class User
     {
@@ -69,25 +69,24 @@ namespace SWADAssg2
         }
     }
 
-    class CarOwner : User
-    {
-        private double earnings;
+     class CarOwner : User
+ {
+     private double earnings;
 
-        public double Earnings
-        {
-            get { return earnings; }
-            set { earnings = value; }
-        }
+     public CarOwner(string username, string password, string id, int phoneNumber, DateTime dob, string email, double earnings) : base(username, password, id, phoneNumber, email)
+     {
+         this.earnings = earnings;
+         this.Cars = new List<Car>();
 
-        public List<Car> Cars { get; set; }
-        public List<Booking> Bookings { get; set; }
+     }
+     public double Earnings
+     {
+         get { return earnings; }
+         set { earnings = value; }
+     }
 
-        public CarOwner(string username, string password, string id, int phoneNumber, string email, double earnings) : base(username, password, id, phoneNumber, email)
-        {
-            this.earnings = earnings;
-            this.Cars = new List<Car>();
-        }
-    }
+     public List<Car> Cars { get; set; }
+ }
 
     public class CarRenter : User
     {
@@ -124,6 +123,8 @@ namespace SWADAssg2
         }
 
         public List<Booking> Bookings { get; set; }
+        public List<MobileWallet> mobileWallets { get; set; }
+        public List<Card> cards { get; set; }
 
         public CarRenter(string username, string password, string id, int phoneNumber, string email, int monthlyFee, DateTime dob, bool isPrime, string licenseid, bool isVerified) : base(username, password, id, phoneNumber, email)
         {
@@ -250,14 +251,8 @@ namespace SWADAssg2
 
     public class PaymentMethod
     {
-        private string id;
         private string type;
-
-        public string Id
-        {
-            get { return id; }
-            set { id = value; }
-        }
+        private decimal balance;
 
         public string Type
         {
@@ -265,19 +260,28 @@ namespace SWADAssg2
             set { type = value; }
         }
 
-        public PaymentMethod(string id, string type)
+        public decimal Balance
         {
-            this.id = id;
-            this.type = type;
+            get { return Balance; }
+            set { Balance = value; }
         }
 
+        public PaymentMethod(string type, decimal balance)
+        {   
+            this.type = type;
+            this.balance = balance;
+        }
 
+        public virtual bool MakePayment(decimal totalAmount)
+        {
+            return true;
+        }
     }
 
     public class MobileWallet : PaymentMethod
     {
         private string name;
-        private string transactionId;
+        private string phoneNo;
 
         public string Name
         {
@@ -285,16 +289,30 @@ namespace SWADAssg2
             set { name = value; }
         }
 
-        public string TranscationId
+        public string PhoneNo
         {
-            get { return transactionId; }
-            set { transactionId = value; }
+            get { return phoneNo; }
+            set { phoneNo = value; }
         }
 
-        public MobileWallet(string id, string type, string name, string transactionId) : base(id, type)
+        public MobileWallet(string type, decimal balance, string name, string phoneNo) : base(type, balance)
         {
             this.name = name;
-            this.transactionId = transactionId;
+            this.phoneNo = phoneNo;
+        }
+
+        public override bool MakePayment(decimal totalAmount)
+        {
+            if (totalAmount <= Balance)
+            {
+                Balance -= totalAmount;
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
+                return false;
+            }
         }
     }
 
@@ -322,7 +340,7 @@ namespace SWADAssg2
             set { holderName = value; }
         }
 
-        public Card(string id, string type, string cardNo, DateTime expiryDate, string holderName) : base(id, type)
+        public Card( string type, decimal balance, string cardNo, DateTime expiryDate, string holderName) : base(type, balance)
         {
             this.cardNo = cardNo;
             this.expiryDate = expiryDate;
@@ -510,6 +528,31 @@ namespace SWADAssg2
             this.endDateTime = endDate;
             this.status = status;
             this.confirmedStatus = confirmedStatus;
+        }
+    }
+
+    public class AvailabilitySchedule
+    {
+        private DateTime startDate;
+        private DateTime endDate;
+
+        public DateTime StartDate
+        {
+            get { return startDate; }
+            set { startDate = value; }
+        }
+        public DateTime EndDate
+        {
+            get { return endDate; }
+            set { endDate = value; }
+        }
+        public List<DateTime> UnavailableDates { get; set; }
+
+        public AvailabilitySchedule(DateTime startDate, DateTime endDate, List<DateTime> unavailableDates)
+        {
+            StartDate = startDate;
+            EndDate = endDate;
+            UnavailableDates = unavailableDates;
         }
     }
 }

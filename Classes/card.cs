@@ -7,19 +7,11 @@ using System.Threading.Tasks;
 
 namespace SWAD_Team4_assignment_2
 {
-    public class Card:PaymentMethod
+    public class Card : PaymentMethod
     {
         private string cardNo;
         private DateTime expiryDate;
         private string holderName;
-
-
-        public Card(string id, string type,string cardNo, DateTime expiryDate, string holderName):base(id,type)
-        {
-            this.cardNo = cardNo;
-            this.expiryDate = expiryDate;
-            this.holderName = holderName;
-        }
 
         public string CardNo
         {
@@ -37,6 +29,13 @@ namespace SWAD_Team4_assignment_2
         {
             get { return holderName; }
             set { holderName = value; }
+        }
+
+        public Card( string type, decimal balance, string cardNo, DateTime expiryDate, string holderName) : base(type, balance)
+        {
+            this.cardNo = cardNo;
+            this.expiryDate = expiryDate;
+            this.holderName = holderName;
         }
     }
 }
