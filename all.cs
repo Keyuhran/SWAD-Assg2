@@ -160,11 +160,6 @@ namespace SWAD_Team4_assignment_2
             StaffId = staffId;
         }
     }
-}
-
-namespace SWAD_Assg2
-{
-    using SWAD_Team4_assignment_2;
 
     public class PaymentMethod
     {
