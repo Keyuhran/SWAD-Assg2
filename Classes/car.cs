@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-// Kieran 
 namespace SWAD_Team4_assignment_2
 {
     public class Car
     {
-
         private string id;
         private string model;
         private string brand;
@@ -19,8 +14,7 @@ namespace SWAD_Team4_assignment_2
         private bool insuranceStatus;
         private string licensePlate;
         private int rentalRate;
-
-
+        private List<AvailabilitySchedule> availabilitySchedules;
 
         public Car(string id, string model, string brand, int year, int mileage, string color, bool insuranceStatus, string licensePlate, int rentalRate)
         {
@@ -33,6 +27,7 @@ namespace SWAD_Team4_assignment_2
             this.insuranceStatus = insuranceStatus;
             this.licensePlate = licensePlate;
             this.rentalRate = rentalRate;
+            this.availabilitySchedules = new List<AvailabilitySchedule>();
         }
 
         public string Id
@@ -80,7 +75,15 @@ namespace SWAD_Team4_assignment_2
             get { return rentalRate; }
             set { rentalRate = value; }
         }
+        public List<AvailabilitySchedule> AvailabilitySchedules
+        {
+            get { return availabilitySchedules; }
+            set { availabilitySchedules = value; }
+        }
 
-
+        public void AddAvailabilitySchedule(AvailabilitySchedule schedule)
+        {
+            availabilitySchedules.Add(schedule);
+        }
     }
 }
