@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.ConstrainedExecution;
 
 namespace SWAD_Team4_assignment_2
 {
@@ -393,6 +394,7 @@ namespace SWAD_Team4_assignment_2
 
             while (true)
             {
+                
                 Console.Write("Enter Car Maker:");
                 make = Console.ReadLine();
                 if (string.IsNullOrEmpty(make)) { Console.WriteLine("Car Make is required!"); continue; }
@@ -413,7 +415,7 @@ namespace SWAD_Team4_assignment_2
 
                 Console.Write("Enter Car License Plate:");
                 licensePlate = Console.ReadLine();
-                if (string.IsNullOrEmpty(licensePlate)) { Console.WriteLine("License Plate is required!"); continue; }
+                if (string.IsNullOrEmpty(licensePlate)) { Console.WriteLine("Car PlateEn required!"); continue; }
 
                 break;
             }
@@ -442,7 +444,7 @@ namespace SWAD_Team4_assignment_2
 
                 Console.Write("Enter Policy Status (e.g., active, expired):");
                 policyStatus = Console.ReadLine();
-                if (string.IsNullOrEmpty(policyStatus)) { Console.WriteLine("Policy Status is required!"); continue; }
+                if (string.IsNullOrEmpty(policyStatus)) { Console.WriteLine("Policy is required!"); continue; }
 
                 Console.Write("Enter Coverage Limit ($):");
                 if (!int.TryParse(Console.ReadLine(), out coverageLimit)) { Console.WriteLine("Coverage Limit must be an integer!"); continue; }
@@ -456,7 +458,7 @@ namespace SWAD_Team4_assignment_2
 
                 if (expiryDate < DateTime.Now)
                 {
-                    Console.WriteLine("Insurance expiry date cannot be in the past.");
+                    Console.WriteLine("Insurance has expired.");
                     continue;
                 }
 
@@ -470,7 +472,7 @@ namespace SWAD_Team4_assignment_2
             while (true)
             {
                 Console.Write("Enter Rental Rate ($/day):");
-                if (!int.TryParse(Console.ReadLine(), out rentalRate)) { Console.WriteLine("Rental Rate must be an integer!"); continue; }
+                if (!int.TryParse(Console.ReadLine(), out rentalRate)) { Console.WriteLine("Must be an integer!"); continue; }
                 break;
             }
 
@@ -495,7 +497,7 @@ namespace SWAD_Team4_assignment_2
                     }
                     if (startDate > newInsurance.ExpiryDate)
                     {
-                        Console.Write("Start date cannot be after the insurance expiry date. Please enter a valid start date.");
+                        Console.Write("Insurance expires by start date. Please enter a valid start date.");
                         continue;
                     }
                     break;
@@ -549,7 +551,7 @@ namespace SWAD_Team4_assignment_2
                             }
                             if (unavailableDate < startDate || unavailableDate > endDate)
                             {
-                                Console.Write("Unavailable date must be within the selected range. Please enter a valid date.");
+                                Console.Write("Date must be within selected range. Please enter a valid date.");
                                 continue;
                             }
                             unavailableDates.Add(unavailableDate);
@@ -569,7 +571,6 @@ namespace SWAD_Team4_assignment_2
             }
 
             Console.WriteLine("All unavailable dates have been entered.");
-
             Car newCar = new Car(nextCarId++.ToString(), model, make, year, mileage, color, insuranceStatus, licensePlate, rentalRate);
             cars.Add(newCar);
 
