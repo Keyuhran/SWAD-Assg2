@@ -69,24 +69,24 @@ namespace SWAD_Team4_assignment_2
         }
     }
 
-     class CarOwner : User
- {
-     private double earnings;
+    class CarOwner : User
+    {
+        private double earnings;
 
-     public CarOwner(string username, string password, string id, int phoneNumber, DateTime dob, string email, double earnings) : base(username, password, id, phoneNumber, email)
-     {
-         this.earnings = earnings;
-         this.Cars = new List<Car>();
+        public CarOwner(string username, string password, string id, int phoneNumber, string email, DateTime dob, double earnings) : base(username, password, id, phoneNumber, email)
+        {
+            this.earnings = earnings;
+            this.Cars = new List<Car>();
 
-     }
-     public double Earnings
-     {
-         get { return earnings; }
-         set { earnings = value; }
-     }
+        }
+        public double Earnings
+        {
+            get { return earnings; }
+            set { earnings = value; }
+        }
 
-     public List<Car> Cars { get; set; }
- }
+        public List<Car> Cars { get; set; }
+    }
 
     public class CarRenter : User
     {
@@ -134,6 +134,8 @@ namespace SWAD_Team4_assignment_2
             this.licenseid = licenseid;
             this.isVerified = isVerified;
             this.Bookings = new List<Booking>();
+            this.mobileWallets =  new List<MobileWallet>();
+            this.cards = new List<Card>();
 
         }
     }
@@ -149,6 +151,7 @@ namespace SWAD_Team4_assignment_2
         private bool insuranceStatus;
         private string licensePlate;
         private int rentalRate;
+        private List<AvailabilitySchedule> availabilitySchedules;
 
         public string Id
         {
@@ -195,6 +198,16 @@ namespace SWAD_Team4_assignment_2
             get { return rentalRate; }
             set { rentalRate = value; }
         }
+        public List<AvailabilitySchedule> AvailabilitySchedules
+        {
+            get { return availabilitySchedules; }
+            set { availabilitySchedules = value; }
+        }
+
+        public void AddAvailabilitySchedule(AvailabilitySchedule schedule)
+        {
+            availabilitySchedules.Add(schedule);
+        }
 
         public Car(string id, string model, string brand, int year, int mileage, string color, bool insuranceStatus, string licensePlate, int rentalRate)
         {
@@ -207,6 +220,7 @@ namespace SWAD_Team4_assignment_2
             this.insuranceStatus = insuranceStatus;
             this.licensePlate = licensePlate;
             this.rentalRate = rentalRate;
+            this.availabilitySchedules = new List<AvailabilitySchedule>();
         }
     }
 
@@ -262,8 +276,8 @@ namespace SWAD_Team4_assignment_2
 
         public decimal Balance
         {
-            get { return Balance; }
-            set { Balance = value; }
+            get { return balance; }
+            set { balance = value; }
         }
 
         public PaymentMethod(string type, decimal balance)
@@ -310,9 +324,13 @@ namespace SWAD_Team4_assignment_2
             }
             else
             {
-                Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
                 return false;
             }
+        }
+
+        public override string ToString()
+        {
+            return $"MobileWallet: Name={name}, PhoneNo={phoneNo}, Type={Type}, Balance={Balance:C}";
         }
     }
 
@@ -340,13 +358,32 @@ namespace SWAD_Team4_assignment_2
             set { holderName = value; }
         }
 
-        public Card( string type, decimal balance, string cardNo, DateTime expiryDate, string holderName) : base(type, balance)
+        public Card(string type, decimal balance, string cardNo, DateTime expiryDate, string holderName) : base(type, balance)
         {
             this.cardNo = cardNo;
             this.expiryDate = expiryDate;
             this.holderName = holderName;
         }
+
+        public override bool MakePayment(decimal totalAmount)
+        {
+            if (totalAmount <= Balance)
+            {
+                Balance -= totalAmount;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"Card: HolderName={holderName}, CardNo={cardNo}, ExpiryDate={expiryDate:MM/yy}, Type={Type}, Balance={Balance:C}";
+        }
     }
+
 
     public class Listing
     {
