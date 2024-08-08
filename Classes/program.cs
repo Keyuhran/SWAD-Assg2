@@ -12,7 +12,7 @@ namespace SWAD_Team4_assignment_2
         static List<AvailabilitySchedule> availabilitySchedules = new List<AvailabilitySchedule>();
         static List<Booking> bookings = new List<Booking>();
         static List<ICarStation> locations = new List<ICarStation>();
-        static int nextCarId = 1; // Static counter for car IDs
+        static int nextCarId = 3; // Static counter for car IDs
 
         static void Main()
         {
@@ -20,7 +20,7 @@ namespace SWAD_Team4_assignment_2
             cars.Add(new Car("2", "Mustang", "Ford", 2021, 20000, "Blue", true, "XYZ789", 80));
             DateTime bday = new DateTime(2024, 8, 16);
             carRenters.Add(new CarRenter("Pofrz", "password", "001", 84048488, "user2@example.com", 0, bday, false, "licenseid", true));
-            carRenters.Add(new CarRenter("KK47", "password", "002", 84048488, "user2@example.com", 0, bday, false, "licenseid", true));
+            carOwners.Add(new CarOwner("KK47", "password", "002", 84048488, "user2@example.com", bday, 0));
             locations.Add(new ICarStation("01", "21 choo street"));
             locations.Add(new ICarStation("02", "47 primo street"));
 
@@ -137,6 +137,7 @@ namespace SWAD_Team4_assignment_2
                                     AddNewVehicle();
                                     break;
                                 case "2":
+                                    ListAllCars();
                                     DisplayCarAvailabilityScheduleById();
                                     break;
                                 case "3":
@@ -620,6 +621,7 @@ namespace SWAD_Team4_assignment_2
         {
             Console.Write("Enter Car ID to view availability schedule: ");
             string carId = Console.ReadLine();
+            Console.WriteLine(carId);
 
             Car car = cars.Find(c => c.Id == carId);
             if (car == null)
@@ -676,6 +678,21 @@ namespace SWAD_Team4_assignment_2
                     break;
                 }
 
+                Console.WriteLine("Available locations:");
+                for (int i = 0; i < locations.Count; i++)
+                {
+                    Console.WriteLine($"ID: {i + 1}, Address: {locations[i].Address}");
+                }
+
+                Console.Write("Enter location ID: ");
+                if (!int.TryParse(Console.ReadLine(), out int locationId) || locationId < 1 || locationId > locations.Count)
+                {
+                    Console.WriteLine("Invalid location ID.");
+                    return;
+                }
+
+                ICarStation selectedLocation = locations[locationId - 1];
+
                 TimeSpan rentalPeriod = endDate - startDate;
                 int rentalDays = rentalPeriod.Days + 1; // Include the start date as a rental day
                 decimal totalCost = rentalDays * selectedCar.RentalRate;
@@ -685,7 +702,7 @@ namespace SWAD_Team4_assignment_2
 
                 if (isAvailable)
                 {
-                    Booking newBooking = new Booking(Guid.NewGuid().ToString(), startDate, endDate, "Pending", false);
+                    Booking newBooking = new Booking(Guid.NewGuid().ToString(), startDate, endDate, "Pending", false, selectedLocation.Address);
                     bookings.Add(newBooking);
                     Console.WriteLine("Booking created successfully.");
 
@@ -918,6 +935,15 @@ namespace SWAD_Team4_assignment_2
                 Console.WriteLine($"Status: {booking.Status}");
                 Console.WriteLine($"Confirmed: {booking.ConfirmedStatus}");
                 Console.WriteLine(new string('-', 30));
+            }
+        }
+
+        static void ListAllCars()
+        {
+            Console.WriteLine("\nCurrent Car Listings:");
+            foreach (var car in cars)
+            {
+                Console.WriteLine($"{car.Id}: {car.Brand} {car.Model} ({car.Year}) - ${car.RentalRate}/day");
             }
         }
     }

@@ -530,6 +530,7 @@ namespace SWAD_Team4_assignment_2
         private DateTime endDateTime;
         private string status;
         private bool confirmedStatus;
+        private string location;
 
         public string Id
         {
@@ -557,8 +558,13 @@ namespace SWAD_Team4_assignment_2
             get { return confirmedStatus; }
             set { confirmedStatus = value; }
         }
+        public string Location
+        {
+            get { return location; }
+            set { location = value; }
+        }
 
-        public Booking(string id, DateTime startDate, DateTime endDate, string status, bool confirmedStatus)
+        public Booking(string id, DateTime startDate, DateTime endDate, string status, bool confirmedStatus, string location)
         {
             this.id = id;
             this.startDateTime = startDate;
