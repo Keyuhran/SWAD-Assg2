@@ -706,36 +706,9 @@ namespace SWAD_Team4_assignment_2
                     bookings.Add(newBooking);
                     Console.WriteLine("Booking created successfully.");
 
-                    Console.Write("Do you want to confirm the booking and proceed to payment? (yes/no): ");
-                    string confirm = Console.ReadLine();
-                    if (confirm.ToLower() == "yes")
+                    if (MakePayment(carRenter, newBooking, totalCost))
                     {
-                        bool paymentCompleted = false;
-                        while (!paymentCompleted)
-                        {
-                            Console.WriteLine("Payment Methods:");
-                            Console.WriteLine("a) Card");
-                            Console.WriteLine("b) Mobile Wallet");
-                            Console.WriteLine("c) Exit");
-                            Console.Write("\nSelect payment method: ");
-                            string paymentType = Console.ReadLine();
-
-                            switch (paymentType)
-                            {
-                                case "a":
-                                    paymentCompleted = HandleCardPayment(carRenter, newBooking, totalCost);
-                                    break;
-                                case "b":
-                                    paymentCompleted = HandleMobileWalletPayment(carRenter, newBooking, totalCost);
-                                    break;
-                                case "c":
-                                    Console.WriteLine("Payment process exited.");
-                                    return;
-                                default:
-                                    Console.WriteLine("Invalid selection. Please choose a valid payment method.");
-                                    break;
-                            }
-                        }
+                        Console.WriteLine("Booking confirmed and payment successful.");
                     }
                     else
                     {
@@ -753,79 +726,68 @@ namespace SWAD_Team4_assignment_2
             }
         }
 
+        static bool MakePayment(CarRenter carRenter, Booking newBooking, decimal totalCost)
+        {
+            if (ConfirmBooking(newBooking))
+            {
+                string paymentType;
+                do
+                {
+                    paymentType = PromptPaymentMethod();
+
+                    switch (paymentType)
+                    {
+                        case "a":
+                            if (HandleCardPayment(carRenter, newBooking, totalCost)) return true;
+                            break;
+                        case "b":
+                            if (HandleMobileWalletPayment(carRenter, newBooking, totalCost)) return true;
+                            break;
+                        case "c":
+                            Console.WriteLine("Payment process exited.");
+                            return false;
+                        default:
+                            Console.WriteLine("Invalid selection. Please choose a valid payment method.");
+                            break;
+                    }
+                } while (paymentType != "c"); // Continue loop until the user exits
+
+            }
+            return false;
+        }
+
+        static bool ConfirmBooking(Booking newBooking)
+        {
+            Console.Write("Do you want to confirm the booking and proceed to payment? (yes/no): ");
+            string confirm = Console.ReadLine();
+            return confirm.ToLower() == "yes";
+        }
+
+        static string PromptPaymentMethod()
+        {
+            Console.WriteLine("Payment Methods:");
+            Console.WriteLine("a) Card");
+            Console.WriteLine("b) Mobile Wallet");
+            Console.WriteLine("c) Exit");
+            Console.Write("\nSelect payment method: ");
+            return Console.ReadLine();
+        }
+
         static bool HandleCardPayment(CarRenter carRenter, Booking newBooking, decimal totalCost)
         {
-            bool flag = true;
-            while (flag)
+            bool paymentSuccessful = false;
+
+            while (!paymentSuccessful)
             {
-                Console.WriteLine("Payment Methods:");
-                Console.WriteLine("a) Create New Card");
-                Console.WriteLine("b) Existing Card");
-                Console.WriteLine("c) Back");
-                Console.Write("\nSelect an option: ");
-                string decision = Console.ReadLine();
+                string decision = PromptCardOption();
 
                 switch (decision)
                 {
                     case "a":
-                        Console.WriteLine("Card payment selected.");
-                        Console.Write("Name of card holder: ");
-                        string holderName = Console.ReadLine();
-                        Console.Write("16 digit Card Number: ");
-                        string cardNo = Console.ReadLine();
-                        Console.Write("Balance in Bank Account (2dp): ");
-                        decimal balance = decimal.Parse(Console.ReadLine());
-                        Console.Write("Expiration Date (YYYY-MM-DD): ");
-                        DateTime expiryDate = DateTime.Parse(Console.ReadLine());
-                        Card card = new Card("Card", balance, cardNo, expiryDate, holderName);
-                        Console.WriteLine(card.ToString());
-                        Console.Write("Would you like to save this payment method? (Y/N) ");
-                        string decision2 = Console.ReadLine();
-                        if (decision2.ToLower() == "y")
-                        {
-                            carRenter.cards.Add(card);
-                        }
-                        Console.WriteLine("Attempting Payment...");
-                        if (card.MakePayment(totalCost))
-                        {
-                            newBooking.Status = "Confirmed";
-                            newBooking.ConfirmedStatus = true;
-                            Console.WriteLine("Booking confirmed and payment successful.");
-                            return true;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
-                        }
+                        paymentSuccessful = ProcessNewCardPayment(carRenter, newBooking, totalCost);
                         break;
                     case "b":
-                        if (carRenter.cards.Count == 0)
-                        {
-                            Console.WriteLine("No cards saved.");
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Cards saved:");
-                            for (int i = 0; i < carRenter.cards.Count; i++)
-                            {
-                                Console.WriteLine($"{i + 1}) {carRenter.cards[i].ToString()}");
-                            }
-                            Console.Write("Choose which card to use: ");
-                            int cardIndex = int.Parse(Console.ReadLine()) - 1;
-                            Card savedCard = carRenter.cards[cardIndex];
-                            if (savedCard.MakePayment(totalCost))
-                            {
-                                newBooking.Status = "Confirmed";
-                                newBooking.ConfirmedStatus = true;
-                                Console.WriteLine("Booking confirmed and payment successful.");
-                                return true;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
-                            }
-                        }
+                        paymentSuccessful = ProcessExistingCardPayment(carRenter, newBooking, totalCost);
                         break;
                     case "c":
                         return false;
@@ -834,79 +796,104 @@ namespace SWAD_Team4_assignment_2
                         break;
                 }
             }
-            return false;
+
+            return paymentSuccessful;
+        }
+
+        static string PromptCardOption()
+        {
+            Console.WriteLine("Payment Methods:");
+            Console.WriteLine("a) Create New Card");
+            Console.WriteLine("b) Existing Card");
+            Console.WriteLine("c) Back");
+            Console.Write("\nSelect an option: ");
+            return Console.ReadLine();
+        }
+
+        static bool ProcessNewCardPayment(CarRenter carRenter, Booking newBooking, decimal totalCost)
+        {
+            Console.WriteLine("Card payment selected.");
+            Console.Write("Name of card holder: ");
+            string holderName = Console.ReadLine();
+            Console.Write("16 digit Card Number: ");
+            string cardNo = Console.ReadLine();
+            Console.Write("Balance in Bank Account (2dp): ");
+            decimal balance = decimal.Parse(Console.ReadLine());
+            Console.Write("Expiration Date (MM/YY): ");
+            string expiryDate = Console.ReadLine();
+            Card card = new Card("Card", balance, cardNo, expiryDate, holderName);
+            Console.WriteLine(card.ToString());
+            if (SavePaymentMethod())
+            {
+                carRenter.cards.Add(card);
+            }
+            return AttemptCardPayment(card, newBooking, totalCost);
+        }
+
+        static bool ProcessExistingCardPayment(CarRenter carRenter, Booking newBooking, decimal totalCost)
+        {
+            if (carRenter.cards.Count == 0)
+            {
+                Console.WriteLine("No cards saved.");
+                return false;
+            }
+            else
+            {
+                Card savedCard = SelectSavedCard(carRenter);
+                return AttemptCardPayment(savedCard, newBooking, totalCost);
+            }
+        }
+
+        static Card SelectSavedCard(CarRenter carRenter)
+        {
+            Console.WriteLine("Cards saved:");
+            for (int i = 0; i < carRenter.cards.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}) {carRenter.cards[i].ToString()}");
+            }
+            Console.Write("Choose which card to use: ");
+            int cardIndex = int.Parse(Console.ReadLine()) - 1;
+            return carRenter.cards[cardIndex];
+        }
+
+        static bool SavePaymentMethod()
+        {
+            Console.Write("Would you like to save this payment method? (Y/N) ");
+            return Console.ReadLine().ToLower() == "y";
+        }
+
+        static bool AttemptCardPayment(Card card, Booking newBooking, decimal totalCost)
+        {
+            Console.WriteLine("Attempting Payment...");
+            if (card.MakePayment(totalCost))
+            {
+                newBooking.Status = "Confirmed";
+                newBooking.ConfirmedStatus = true;
+                Console.WriteLine("Booking confirmed and payment successful.");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
+                return false;
+            }
         }
 
         static bool HandleMobileWalletPayment(CarRenter carRenter, Booking newBooking, decimal totalCost)
         {
-            bool flag = true;
-            while (flag)
+            bool paymentSuccessful = false;
+
+            while (!paymentSuccessful)
             {
-                Console.WriteLine("Payment Methods:");
-                Console.WriteLine("a) Link new Mobile Wallet");
-                Console.WriteLine("b) Existing Mobile Wallet");
-                Console.WriteLine("c) Back");
-                Console.Write("\nSelect an option: ");
-                string decision = Console.ReadLine();
+                string decision = PromptMobileWalletOption();
 
                 switch (decision)
                 {
                     case "a":
-                        Console.WriteLine("Mobile Wallet payment selected.");
-                        Console.Write("Name registered under Mobile Wallet: ");
-                        string name = Console.ReadLine();
-                        Console.Write("Balance in Mobile Wallet (2dp): ");
-                        decimal balance = decimal.Parse(Console.ReadLine());
-                        Console.Write("Phone No registered under Mobile Wallet: ");
-                        string phoneNo = Console.ReadLine();
-                        MobileWallet mobileWallet = new MobileWallet("Mobile Wallet", balance, name, phoneNo);
-                        Console.Write("Would you like to save this payment method? (Y/N) ");
-                        string decision2 = Console.ReadLine();
-                        if (decision2.ToLower() == "y")
-                        {
-                            carRenter.mobileWallets.Add(mobileWallet);
-                        }
-                        Console.WriteLine("Attempting Payment...");
-                        if (mobileWallet.MakePayment(totalCost))
-                        {
-                            newBooking.Status = "Confirmed";
-                            newBooking.ConfirmedStatus = true;
-                            Console.WriteLine("Booking confirmed and payment successful.");
-                            return true;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
-                        }
+                        paymentSuccessful = ProcessNewMobileWalletPayment(carRenter, newBooking, totalCost);
                         break;
                     case "b":
-                        if (carRenter.mobileWallets.Count == 0)
-                        {
-                            Console.WriteLine("No mobile wallets previously linked.");
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Mobile Wallets Linked:");
-                            for (int i = 0; i < carRenter.mobileWallets.Count; i++)
-                            {
-                                Console.WriteLine($"{i + 1}) {carRenter.mobileWallets[i].ToString()}");
-                            }
-                            Console.Write("Choose which mobile wallet to use: ");
-                            int walletIndex = int.Parse(Console.ReadLine()) - 1;
-                            MobileWallet savedWallet = carRenter.mobileWallets[walletIndex];
-                            if (savedWallet.MakePayment(totalCost))
-                            {
-                                newBooking.Status = "Confirmed";
-                                newBooking.ConfirmedStatus = true;
-                                Console.WriteLine("Booking confirmed and payment successful.");
-                                return true;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
-                            }
-                        }
+                        paymentSuccessful = ProcessExistingMobileWalletPayment(carRenter, newBooking, totalCost);
                         break;
                     case "c":
                         return false;
@@ -915,8 +902,81 @@ namespace SWAD_Team4_assignment_2
                         break;
                 }
             }
-            return false;
+
+            return paymentSuccessful;
         }
+
+        static string PromptMobileWalletOption()
+        {
+            Console.WriteLine("Payment Methods:");
+            Console.WriteLine("a) Link new Mobile Wallet");
+            Console.WriteLine("b) Existing Mobile Wallet");
+            Console.WriteLine("c) Back");
+            Console.Write("\nSelect an option: ");
+            return Console.ReadLine();
+        }
+
+        static bool ProcessNewMobileWalletPayment(CarRenter carRenter, Booking newBooking, decimal totalCost)
+        {
+            Console.WriteLine("Mobile Wallet payment selected.");
+            Console.Write("Name registered under Mobile Wallet: ");
+            string name = Console.ReadLine();
+            Console.Write("Balance in Mobile Wallet (2dp): ");
+            decimal balance = decimal.Parse(Console.ReadLine());
+            Console.Write("Phone No registered under Mobile Wallet: ");
+            string phoneNo = Console.ReadLine();
+            MobileWallet mobileWallet = new MobileWallet("Mobile Wallet", balance, name, phoneNo);
+            if (SavePaymentMethod())
+            {
+                carRenter.mobileWallets.Add(mobileWallet);
+            }
+            return AttemptMobileWalletPayment(mobileWallet, newBooking, totalCost);
+        }
+
+        static bool ProcessExistingMobileWalletPayment(CarRenter carRenter, Booking newBooking, decimal totalCost)
+        {
+            if (carRenter.mobileWallets.Count == 0)
+            {
+                Console.WriteLine("No mobile wallets previously linked.");
+                return false;
+            }
+            else
+            {
+                MobileWallet savedWallet = SelectSavedMobileWallet(carRenter);
+                return AttemptMobileWalletPayment(savedWallet, newBooking, totalCost);
+            }
+        }
+
+        static MobileWallet SelectSavedMobileWallet(CarRenter carRenter)
+        {
+            Console.WriteLine("Mobile Wallets Linked:");
+            for (int i = 0; i < carRenter.mobileWallets.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}) {carRenter.mobileWallets[i].ToString()}");
+            }
+            Console.Write("Choose which mobile wallet to use: ");
+            int walletIndex = int.Parse(Console.ReadLine()) - 1;
+            return carRenter.mobileWallets[walletIndex];
+        }
+
+        static bool AttemptMobileWalletPayment(MobileWallet mobileWallet, Booking newBooking, decimal totalCost)
+        {
+            Console.WriteLine("Attempting Payment...");
+            if (mobileWallet.MakePayment(totalCost))
+            {
+                newBooking.Status = "Confirmed";
+                newBooking.ConfirmedStatus = true;
+                Console.WriteLine("Booking confirmed and payment successful.");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Payment failure. Insufficient funds. Try Again.");
+                return false;
+            }
+        }
+
+
 
         static void DisplayAllBookings()
         {
