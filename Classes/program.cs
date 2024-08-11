@@ -415,7 +415,7 @@ namespace SWAD_Team4_assignment_2
 
                 Console.Write("Enter Car License Plate:");
                 licensePlate = Console.ReadLine();
-                if (string.IsNullOrEmpty(licensePlate)) { Console.WriteLine("Car PlateEn required!"); continue; }
+                if (string.IsNullOrEmpty(licensePlate)) { Console.WriteLine("Car Plate required!"); continue; }
 
                 break;
             }
