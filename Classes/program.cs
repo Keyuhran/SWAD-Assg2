@@ -7,7 +7,7 @@ namespace SWAD_Team4_assignment_2
 {
     class Program
     {
-        static List<Car> cars = new List<Car>();
+        static List<Car> carList = new List<Car>();
         static List<CarRenter> carRenters = new List<CarRenter>();
         static List<CarOwner> carOwners = new List<CarOwner>();
         static List<AvailabilitySchedule> availabilitySchedules = new List<AvailabilitySchedule>();
@@ -17,8 +17,8 @@ namespace SWAD_Team4_assignment_2
 
         static void Main()
         {
-            cars.Add(new Car("1", "Model S", "Tesla", 2022, 15000, "Red", true, "ABC123", 100));
-            cars.Add(new Car("2", "Mustang", "Ford", 2021, 20000, "Blue", true, "XYZ789", 80));
+            carList.Add(new Car("1", "Model S", "Tesla", 2022, 15000, "Red", true, "ABC123", 100));
+            carList.Add(new Car("2", "Mustang", "Ford", 2021, 20000, "Blue", true, "XYZ789", 80));
             DateTime bday = new DateTime(2024, 8, 16);
             carRenters.Add(new CarRenter("Pofrz", "password", "001", 84048488, "user2@example.com", 0, bday, false, "licenseid", true));
             carOwners.Add(new CarOwner("KK47", "password", "002", 84048488, "user2@example.com", bday, 0));
@@ -394,7 +394,7 @@ namespace SWAD_Team4_assignment_2
 
             while (true)
             {
-                
+
                 Console.Write("Enter Car Maker:");
                 make = Console.ReadLine();
                 if (string.IsNullOrEmpty(make)) { Console.WriteLine("Car Make is required!"); continue; }
@@ -572,7 +572,7 @@ namespace SWAD_Team4_assignment_2
 
             Console.WriteLine("All unavailable dates have been entered.");
             Car newCar = new Car(nextCarId++.ToString(), model, make, year, mileage, color, insuranceStatus, licensePlate, rentalRate);
-            cars.Add(newCar);
+            carList.Add(newCar);
 
             AvailabilitySchedule newSchedule = new AvailabilitySchedule(startDate, endDate, unavailableDates);
             newCar.AddAvailabilitySchedule(newSchedule);
@@ -580,13 +580,13 @@ namespace SWAD_Team4_assignment_2
             Console.WriteLine("Car listing and availability schedule created successfully!");
 
             Console.WriteLine("\nCurrent Car Listings:");
-            foreach (var car in cars)
+            foreach (var car in carList)
             {
                 Console.WriteLine($"{car.Brand} {car.Model} ({car.Year}) - ${car.RentalRate}/day");
             }
 
             Console.WriteLine("\nCurrent Availability Schedules:");
-            foreach (var car in cars)
+            foreach (var car in carList)
             {
                 foreach (var schedule in car.AvailabilitySchedules)
                 {
@@ -603,7 +603,7 @@ namespace SWAD_Team4_assignment_2
 
         static bool IsDateRangeOverlapping(DateTime startDate, DateTime endDate)
         {
-            foreach (var car in cars)
+            foreach (var car in carList)
             {
                 foreach (var schedule in car.AvailabilitySchedules)
                 {
@@ -624,7 +624,7 @@ namespace SWAD_Team4_assignment_2
             string carId = Console.ReadLine();
             Console.WriteLine(carId);
 
-            Car car = cars.Find(c => c.Id == carId);
+            Car car = carList.Find(c => c.Id == carId);
             if (car == null)
             {
                 Console.WriteLine("Car not found.");
@@ -644,72 +644,157 @@ namespace SWAD_Team4_assignment_2
             }
         }
 
-        static void MakeBooking(CarRenter carRenter)
+        static void DisplayCars()
         {
+            // This method displays the cars from the provided list
             Console.WriteLine("Available cars:");
-            foreach (var car in cars)
+            foreach (var car in carList)
             {
                 Console.WriteLine($"ID: {car.Id}, Model: {car.Model}, Brand: {car.Brand}, Year: {car.Year}, Mileage: {car.Mileage}, Color: {car.Color}, Rental Rate: {car.RentalRate}");
             }
+        }
 
+        static Car selectCar()
+        {
             Console.Write("Enter vehicle ID: ");
             string input = Console.ReadLine();
-            Car selectedCar = cars.Find(c => c.Id == input);
+            Car selectedCar = carList.Find(c => c.Id == input);
+            return selectedCar;
+        }
+        static void DisplayCarDetails(Car car)
+        {
+            if (car == null)
+            {
+                Console.WriteLine("Car not found.");
+                return;
+            }
 
+            Console.WriteLine("Car Details:");
+            Console.WriteLine($"ID: {car.Id}");
+            Console.WriteLine($"Model: {car.Model}");
+            Console.WriteLine($"Brand: {car.Brand}");
+            Console.WriteLine($"Year: {car.Year}");
+            Console.WriteLine($"Mileage: {car.Mileage} km");
+            Console.WriteLine($"Color: {car.Color}");
+            Console.WriteLine($"Insurance Status: {(car.InsuranceStatus ? "Insured" : "Not Insured")}");
+            Console.WriteLine($"License Plate: {car.LicensePlate}");
+            Console.WriteLine($"Rental Rate: ${car.RentalRate} per day");
+        }
+
+        static DateTime EnterStartDate()
+        {
+            DateTime startDate;
+            while (true)
+            {
+                Console.Write("Enter start date (yyyy-mm-dd): ");
+                if (DateTime.TryParse(Console.ReadLine(), out startDate) && startDate >= DateTime.Today)
+                {
+                    return startDate;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid start date. Please enter a valid date that is not in the past.");
+                }
+            }
+        }
+
+        static DateTime EnterEndDate(DateTime startDate)
+        {
+            DateTime endDate;
+            while (true)
+            {
+                Console.Write("Enter end date (yyyy-mm-dd): ");
+                if (DateTime.TryParse(Console.ReadLine(), out endDate) && endDate > startDate)
+                {
+                    return endDate;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid end date. Please enter a valid date that is after the start date.");
+                }
+            }
+        }
+        static void displayLocations()
+        {
+            Console.WriteLine("Available locations:");
+            for (int i = 0; i < locations.Count; i++)
+            {
+                Console.WriteLine($"ID: {i + 1}, Address: {locations[i].Address}");
+            }
+        }
+
+        static ICarStation EnterLocation()
+        {
+            Console.Write("Enter location ID: ");
+            if (int.TryParse(Console.ReadLine(), out int locationId) && locationId > 0 && locationId <= locations.Count)
+            {
+                return locations[locationId - 1]; // Assuming locations is a List<ICarStation>
+            }
+            else
+            {
+                Console.WriteLine("Invalid location ID.");
+                return null; // Return null or handle invalid input as needed
+            }
+        }
+
+        static bool CheckAvailability(DateTime startDate, DateTime endDate, Car selectedCar)
+        {
+            return !bookings.Any(booking => booking.Status == "Confirmed" &&
+                                            booking.StartDateTime < endDate &&
+                                            startDate < booking.EndDateTime);
+        }
+
+        static decimal CalculateCost(DateTime startDate, DateTime endDate, Car selectedCar)
+        {
+            TimeSpan rentalPeriod = endDate - startDate;
+            int rentalDays = rentalPeriod.Days + 1; // Include the start date as a rental day
+            decimal totalCost = rentalDays * selectedCar.RentalRate;
+            return totalCost;
+        }
+
+        static void DisplayTotalCost(decimal totalCost)
+        {
+            Console.WriteLine($"Total cost for the booking: ${totalCost}");
+        }
+        static Booking CreateBooking(DateTime startDate, DateTime endDate, ICarStation selectedLocation, Car selectedCar)
+        {
+            Booking newBooking = new Booking(Guid.NewGuid().ToString(), startDate, endDate, "Pending", false, selectedLocation.Address);
+            bookings.Add(newBooking);
+            Console.WriteLine("Booking created successfully.");
+            return newBooking;
+        }
+
+        static void MakeBooking(CarRenter carRenter)
+        {
+            DisplayCars();
+
+
+            Car selectedCar = selectCar();
+            DisplayCarDetails(selectedCar);
             if (selectedCar != null)
             {
-                DateTime startDate;
-                DateTime endDate;
-                while (true)
-                {
-                    Console.Write("Enter start date (yyyy-mm-dd): ");
-                    if (!DateTime.TryParse(Console.ReadLine(), out startDate) || startDate < DateTime.Today)
-                    {
-                        Console.WriteLine("Invalid start date. Please enter a valid date that is not in the past.");
-                        continue;
-                    }
+                DateTime startDate = EnterStartDate();
+                DateTime endDate = EnterEndDate(startDate);
 
-                    Console.Write("Enter end date (yyyy-mm-dd): ");
-                    if (!DateTime.TryParse(Console.ReadLine(), out endDate) || endDate < startDate)
-                    {
-                        Console.WriteLine("Invalid end date. Please enter a valid date that is after the start date.");
-                        continue;
-                    }
+                displayLocations();
+                ICarStation selectedLocation = EnterLocation();
 
-                    break;
-                }
 
-                Console.WriteLine("Available locations:");
-                for (int i = 0; i < locations.Count; i++)
-                {
-                    Console.WriteLine($"ID: {i + 1}, Address: {locations[i].Address}");
-                }
+                bool isAvailable = CheckAvailability(startDate, endDate, selectedCar);
+                Booking newBooking = CreateBooking(startDate,endDate,selectedLocation,selectedCar);
 
-                Console.Write("Enter location ID: ");
-                if (!int.TryParse(Console.ReadLine(), out int locationId) || locationId < 1 || locationId > locations.Count)
-                {
-                    Console.WriteLine("Invalid location ID.");
-                    return;
-                }
 
-                ICarStation selectedLocation = locations[locationId - 1];
-
-                TimeSpan rentalPeriod = endDate - startDate;
-                int rentalDays = rentalPeriod.Days + 1; // Include the start date as a rental day
-                decimal totalCost = rentalDays * selectedCar.RentalRate;
-                Console.WriteLine($"Total cost for the booking: ${totalCost}");
-
-                bool isAvailable = !bookings.Any(booking => booking.Status == "Confirmed" && booking.StartDateTime < endDate && startDate < booking.EndDateTime);
+                ;
 
                 if (isAvailable)
                 {
-                    Booking newBooking = new Booking(Guid.NewGuid().ToString(), startDate, endDate, "Pending", false, selectedLocation.Address);
-                    bookings.Add(newBooking);
-                    Console.WriteLine("Booking created successfully.");
+                    decimal totalCost = CalculateCost(startDate, endDate, selectedCar);
+                    DisplayTotalCost(totalCost);
 
                     if (MakePayment(carRenter, newBooking, totalCost))
                     {
                         Console.WriteLine("Booking confirmed and payment successful.");
+                        
                     }
                     else
                     {
@@ -726,7 +811,25 @@ namespace SWAD_Team4_assignment_2
                 Console.WriteLine("Invalid vehicle ID.");
             }
         }
+        static void DisplayAllBookings()
+        {
+            if (bookings.Count == 0)
+            {
+                Console.WriteLine("No bookings available.");
+                return;
+            }
 
+            Console.WriteLine("All Bookings:");
+            foreach (var booking in bookings)
+            {
+                Console.WriteLine($"Booking ID: {booking.Id}");
+                Console.WriteLine($"Start Date: {booking.StartDateTime:yyyy-MM-dd}");
+                Console.WriteLine($"End Date: {booking.EndDateTime:yyyy-MM-dd}");
+                Console.WriteLine($"Status: {booking.Status}");
+                Console.WriteLine($"Confirmed: {booking.ConfirmedStatus}");
+                Console.WriteLine(new string('-', 30));
+            }
+        }
         static bool MakePayment(CarRenter carRenter, Booking newBooking, decimal totalCost)
         {
             if (ConfirmBooking(newBooking))
@@ -821,7 +924,9 @@ namespace SWAD_Team4_assignment_2
             Console.Write("Balance in Bank Account (2dp): ");
             decimal balance = decimal.Parse(Console.ReadLine());
             Console.Write("Expiration Date (MM/YY): ");
-            string expiryDate = Console.ReadLine();
+            string input = Console.ReadLine();
+            DateTime expiryDate;
+            DateTime.TryParse(input, out expiryDate);
             Card card = new Card("Card", balance, cardNo, expiryDate, holderName);
             Console.WriteLine(card.ToString());
             if (SavePaymentMethod())
@@ -978,31 +1083,10 @@ namespace SWAD_Team4_assignment_2
         }
 
 
-
-        static void DisplayAllBookings()
-        {
-            if (bookings.Count == 0)
-            {
-                Console.WriteLine("No bookings available.");
-                return;
-            }
-
-            Console.WriteLine("All Bookings:");
-            foreach (var booking in bookings)
-            {
-                Console.WriteLine($"Booking ID: {booking.Id}");
-                Console.WriteLine($"Start Date: {booking.StartDateTime:yyyy-MM-dd}");
-                Console.WriteLine($"End Date: {booking.EndDateTime:yyyy-MM-dd}");
-                Console.WriteLine($"Status: {booking.Status}");
-                Console.WriteLine($"Confirmed: {booking.ConfirmedStatus}");
-                Console.WriteLine(new string('-', 30));
-            }
-        }
-
         static void ListAllCars()
         {
             Console.WriteLine("\nCurrent Car Listings:");
-            foreach (var car in cars)
+            foreach (var car in carList)
             {
                 Console.WriteLine($"{car.Id}: {car.Brand} {car.Model} ({car.Year}) - ${car.RentalRate}/day");
             }
