@@ -41,7 +41,7 @@ namespace SWAD_Team4_assignment_2
                         LogIn();
                         break;
                     case "2":
-                        CreateAccount();
+                        SignUp();
                         Console.Write("Do you wish to Log In? (Y/N): ");
                         string logchoice = Console.ReadLine();
                         if (logchoice.ToLower() == "y")
@@ -164,218 +164,259 @@ namespace SWAD_Team4_assignment_2
             }
         }
 
-        static void CreateAccount()
-        {
-            Console.WriteLine("1. Create CarRenter Account");
-            Console.WriteLine("2. Create CarOwner Account");
-            Console.Write("\nPlease select an option: ");
-            string choice = Console.ReadLine();
+        static void SignUp()
+{
+    Console.WriteLine("1. Create CarRenter Account");
+    Console.WriteLine("2. Create CarOwner Account");
+    Console.Write("\nPlease select an option: ");
+    string choice = Console.ReadLine();
 
-            switch (choice)
-            {
-                case "1":
-                    CreateNewRenterAccount();
-                    break;
-                case "2":
-                    CreateNewOwnerAccount();
-                    break;
-                default:
-                    Console.WriteLine("Invalid option. Please try again.");
-                    break;
-            }
+    switch (choice)
+    {
+        case "1":
+            CreateNewRenterAccount();
+            break;
+        case "2":
+            CreateNewOwnerAccount();
+            break;
+        default:
+            Console.WriteLine("Invalid option. Please try again.");
+            break;
+    }
+}
+
+static void CreateNewRenterAccount()
+{
+    Console.WriteLine("\nEnter Username:");
+    string username = Console.ReadLine();
+
+    Console.WriteLine("\nEnter Password:");
+    string password = Console.ReadLine();
+
+    string email;
+    while (true)
+    {
+        Console.WriteLine("\nEnter Email:");
+        email = Console.ReadLine();
+        if (!email.Contains("@") || !email.Contains("."))
+        {
+            Console.WriteLine("Invalid email format. Please enter a valid email.");
+            continue;
         }
 
-        static void CreateNewRenterAccount()
+        bool emailExists = carRenters.Exists(renter => renter.Email == email);
+
+        if (emailExists)
         {
-            Console.WriteLine("\nEnter Username:");
-            string username = Console.ReadLine();
+            Console.WriteLine("This email is already registered. Please use a different email.");
+        }
+        else
+        {
+            break;
+        }
+    }
 
-            Console.WriteLine("\nEnter Password:");
-            string password = Console.ReadLine();
+    string id = UniqueID().ToString();
 
-            string email;
-            while (true)
+    int phoneNumber;
+    while (true)
+    {
+        Console.Write("\nEnter Phone Number: ");
+        string phoneNumberInput = Console.ReadLine();
+
+        if (phoneNumberInput.Length == 8 && (phoneNumberInput.StartsWith("8") || phoneNumberInput.StartsWith("9")) && int.TryParse(phoneNumberInput, out phoneNumber))
+        {
+            break;
+        }
+        else
+        {
+            Console.WriteLine("Invalid phone number. It must start with 8 or 9 and be 8 digits long.");
+        }
+    }
+
+    DateTime dob;
+    while (true)
+    {
+        Console.Write("\nEnter Date of Birth (YYYY-MM-DD): ");
+        string dobInput = Console.ReadLine();
+
+        if (DateTime.TryParseExact(dobInput, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dob))
+        {
+            int age = DateTime.Now.Year - dob.Year;
+            if (dob > DateTime.Now.AddYears(-age)) age--;
+            if (age >= 18)
             {
-                Console.WriteLine("\nEnter Email:");
-                email = Console.ReadLine();
-                if (!email.Contains("@") || !email.Contains("."))
-                {
-                    Console.WriteLine("Invalid email format. Please enter a valid email.");
-                    continue;
-                }
-
-                bool emailExists = carRenters.Exists(renter => renter.Email == email);
-
-                if (emailExists)
-                {
-                    Console.WriteLine("This email is already registered. Please use a different email.");
-                }
-                else
-                {
-                    break;
-                }
+                break;
             }
-
-            string id = UniqueID().ToString();
-
-            int phoneNumber;
-            while (true)
+            else
             {
-                Console.Write("\nEnter Phone Number: ");
-                string phoneNumberInput = Console.ReadLine();
-
-                if (phoneNumberInput.Length == 8 && (phoneNumberInput.StartsWith("8") || phoneNumberInput.StartsWith("9")) && int.TryParse(phoneNumberInput, out phoneNumber))
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid phone number. It must start with 8 or 9 and be 8 digits long.");
-                }
+                Console.WriteLine("You cannot register as you are underage.");
             }
+        }
+        else
+        {
+            Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+        }
+    }
 
-            DateTime dob;
-            while (true)
-            {
-                Console.Write("\nEnter Date of Birth (YYYY-MM-DD): ");
-                string dobInput = Console.ReadLine();
+    int monthlyFee = 0;
+    bool isPrime = false;
+    bool isVerified = false;
+    string licenseId;
+    while (true)
+    {
+        Console.Write("\nEnter License ID (Format: One letter, seven digits, one letter): ");
+        licenseId = Console.ReadLine();
+        if (licenseId.Length == 9 &&
+            char.IsLetter(licenseId[0]) &&
+            char.IsLetter(licenseId[8]) &&
+            int.TryParse(licenseId.Substring(1, 7), out _))
+        {
+            break;
+        }
+        else
+        {
+            Console.WriteLine("Invalid License ID format. It must be one letter, followed by seven digits, followed by one letter.");
+        }
+    }
 
-                if (DateTime.TryParseExact(dobInput, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dob))
-                {
-                    int age = DateTime.Now.Year - dob.Year;
-                    if (dob > DateTime.Now.AddYears(-age)) age--;
-                    if (age >= 18)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("You cannot register as you are underage.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
-                }
-            }
+    CarRenter newCarRenter = new CarRenter(username, password, id, phoneNumber, email, monthlyFee, dob, isPrime, licenseId, isVerified);
+    carRenters.Add(newCarRenter);
+    Console.WriteLine("\nNew Renter Account Created:");
+    Console.WriteLine($"Name: {username}");
+    Console.WriteLine($"ID: {id}");
+    Console.WriteLine($"Email: {email}");
+    Console.WriteLine($"Phone Number: {phoneNumber}");
+    Console.WriteLine($"Date of Birth: {dob:yyyy-MM-dd}");
+    Console.WriteLine($"License ID: {licenseId}");
 
-            int monthlyFee = 0;
-            bool isPrime = false;
-            bool isVerified = false;
-            string licenseId;
-            while (true)
-            {
-                Console.Write("\nEnter License ID (Format: One letter, seven digits, one letter): ");
-                licenseId = Console.ReadLine();
-                if (licenseId.Length == 9 &&
-                    char.IsLetter(licenseId[0]) &&
-                    char.IsLetter(licenseId[8]) &&
-                    int.TryParse(licenseId.Substring(1, 7), out _))
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid License ID format. It must be one letter, followed by seven digits, followed by one letter.");
-                }
-            }
+    CreateAccount();
+}
 
-            CarRenter newCarRenter = new CarRenter(username, password, id, phoneNumber, email, monthlyFee, dob, isPrime, licenseId, isVerified);
-            carRenters.Add(newCarRenter);
-            Console.WriteLine("\nNew Renter Account Created:");
-            Console.WriteLine($"Name: {username}");
-            Console.WriteLine($"ID: {id}");
-            Console.WriteLine($"Email: {email}");
-            Console.WriteLine($"Phone Number: {phoneNumber}");
-            Console.WriteLine($"Date of Birth: {dob:yyyy-MM-dd}");
-            Console.WriteLine($"License ID: {licenseId}");
+static void CreateNewOwnerAccount()
+{
+    Console.WriteLine("\nEnter Username:");
+    string username = Console.ReadLine();
+    Console.WriteLine("\nEnter Password:");
+    string password = Console.ReadLine();
+
+    string email;
+    while (true)
+    {
+        Console.WriteLine("\nEnter Email:");
+        email = Console.ReadLine();
+        if (!email.Contains("@") || !email.Contains("."))
+        {
+            Console.WriteLine("Invalid email format. Please enter a valid email.");
+            continue;
         }
 
-        static void CreateNewOwnerAccount()
+        bool emailExists = carOwners.Exists(owner => owner.Email == email);
+
+        if (emailExists)
         {
-            Console.WriteLine("\nEnter Username:");
-            string username = Console.ReadLine();
-            Console.WriteLine("\nEnter Password:");
-            string password = Console.ReadLine();
-
-            string email;
-            while (true)
-            {
-                Console.WriteLine("\nEnter Email:");
-                email = Console.ReadLine();
-                if (!email.Contains("@") || !email.Contains("."))
-                {
-                    Console.WriteLine("Invalid email format. Please enter a valid email.");
-                    continue;
-                }
-
-                bool emailExists = carOwners.Exists(owner => owner.Email == email);
-
-                if (emailExists)
-                {
-                    Console.WriteLine("This email is already registered. Please use a different email.");
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            string id = UniqueID().ToString();
-
-            int phoneNumber;
-            while (true)
-            {
-                Console.WriteLine("\nEnter Phone Number: ");
-                string phoneNumberInput = Console.ReadLine();
-
-                if (phoneNumberInput.Length == 8 && (phoneNumberInput.StartsWith("8") || phoneNumberInput.StartsWith("9")) && int.TryParse(phoneNumberInput, out phoneNumber))
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid phone number. It must start with 8 or 9 and be 8 digits long.");
-                }
-            }
-
-            DateTime dob;
-            while (true)
-            {
-                Console.WriteLine("\nEnter Date of Birth (YYYY-MM-DD): ");
-                string dobInput = Console.ReadLine();
-
-                if (DateTime.TryParseExact(dobInput, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dob))
-                {
-                    int age = DateTime.Now.Year - dob.Year;
-                    if (dob > DateTime.Now.AddYears(-age)) age--;
-                    if (age >= 18)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("You cannot register as you are underage.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
-                }
-            }
-
-            double earnings = 0;
-
-            CarOwner newCarOwner = new CarOwner(username, password, id, phoneNumber, email, dob, earnings);
-            carOwners.Add(newCarOwner);
-
-            Console.WriteLine("\nNew Car Owner Account Created:");
-            Console.WriteLine($"Name: {username}");
-            Console.WriteLine($"ID: {id}");
-            Console.WriteLine($"Email: {email}");
-            Console.WriteLine($"Phone Number: {phoneNumber}");
-            Console.WriteLine($"Date of Birth: {dob:yyyy-MM-dd}");
+            Console.WriteLine("This email is already registered. Please use a different email.");
         }
+        else
+        {
+            break;
+        }
+    }
+
+    string id = UniqueID().ToString();
+
+    int phoneNumber;
+    while (true)
+    {
+        Console.WriteLine("\nEnter Phone Number: ");
+        string phoneNumberInput = Console.ReadLine();
+
+        if (phoneNumberInput.Length == 8 && (phoneNumberInput.StartsWith("8") || phoneNumberInput.StartsWith("9")) && int.TryParse(phoneNumberInput, out phoneNumber))
+        {
+            break;
+        }
+        else
+        {
+            Console.WriteLine("Invalid phone number. It must start with 8 or 9 and be 8 digits long.");
+        }
+    }
+
+    DateTime dob;
+    while (true)
+    {
+        Console.WriteLine("\nEnter Date of Birth (YYYY-MM-DD): ");
+        string dobInput = Console.ReadLine();
+
+        if (DateTime.TryParseExact(dobInput, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dob))
+        {
+            int age = DateTime.Now.Year - dob.Year;
+            if (dob > DateTime.Now.AddYears(-age)) age--;
+            if (age >= 18)
+            {
+                break;
+            }
+            else
+            {
+                Console.WriteLine("You cannot register as you are underage.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+        }
+    }
+
+    double earnings = 0;
+
+    CarOwner newCarOwner = new CarOwner(username, password, id, phoneNumber, email, dob, earnings);
+    carOwners.Add(newCarOwner);
+
+    Console.WriteLine("\nNew Car Owner Account Created:");
+    Console.WriteLine($"Name: {username}");
+    Console.WriteLine($"ID: {id}");
+    Console.WriteLine($"Email: {email}");
+    Console.WriteLine($"Phone Number: {phoneNumber}");
+    Console.WriteLine($"Date of Birth: {dob:yyyy-MM-dd}");
+
+    CreateAccount();
+}
+
+static int getUniqueID = 1;
+static int UniqueID()
+{
+    return getUniqueID++;
+}
+
+
+static void CreateAccount()
+{
+    Random random = new Random();
+    int otp = random.Next(100000, 999999); 
+
+    Console.WriteLine($"\nYour One Time Password (OTP) has been sent to your email.");
+    Console.WriteLine($"[Simulated OTP: {otp}]"); 
+
+    EnterPinNumber(otp); 
+}
+
+static void EnterPinNumber(int otp)
+{
+    while (true)
+    {
+        Console.Write("\nEnter the 6-digit OTP: ");
+        string input = Console.ReadLine();
+
+        if (int.TryParse(input, out int enteredOtp) && enteredOtp == otp)
+        {
+            Console.WriteLine("\nYour account has been successfully activated!");
+            break;
+        }
+        else
+        {
+            Console.WriteLine("Invalid OTP. Please try again.");
+        }
+    }
+}
 
         static int getUniqueID = 1;
         static int UniqueID()
